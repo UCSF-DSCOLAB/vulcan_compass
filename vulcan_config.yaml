@@ -1,0 +1,103 @@
+## Params
+- display: "Dataset__name of sc_seq_dataset record"
+  ui_component: "string"
+  doc: "Provide the identifier ('name' attribute) of the sc_seq_dataset record you wish to explore here. Note that we definitely plan to improve this particular selection method in the future!"
+  output:
+    params: [ "dataset_name" ]
+- display: "Pseudobulking__Minimum cell cutoff"
+  ui_component: "int"
+  default: 10
+  doc: "Establishes the minimum number of cells to use in pseudobulking the dataset. Pseudobulking will be skipped for a given sample and cell type if there are fewer than this many cells."
+  output:
+    params: [ "min_cells" ]
+- display: "Pseudobulking__Sample Metadata Column Name"
+  ui_component: "string"
+  doc: "Establishes the column name of the cells metadata that holds sample identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  output:
+    params: [ "sample_id_column" ]
+- display: "Pseudobulking__Cell-Types Metadata Column Name"
+  ui_component: "string"
+  doc: "Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  output:
+    params: [ "cell_type_column" ]
+- display: "Normalization__method"
+  ui_component: "dropdown"
+  doc: "Establishes additional normalization to be performed. The best or preferred method is currently unknown, so we offer all options that the compass team reported assessing. Options are:\n\t-None: Utilize read-depth normalization of original data and don't apply anything after running Compass.\n\t-Early__depth_norm_to_metabolic_genes: Re-apply read-depth normalization after trimming to only genes that will be used by Compass.\n\t-Late__by_reaction_sum: Utilize read-depth normalization of original data for running compass, then normalize all reaction scores, per sample, based on their proportion of the sum of all calculated reaction scores.\n\t-Late__by_reaction_rank: Utilize read-depth normalization of original data for running compass, then apply a rank-based normalization to compass outputs, per sample, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
+  input:
+    preset:
+      options: 
+        - "None__no_additional_normalization"
+        - "Early__depth_norm_to_metabolic_genes"
+        - "Late__by_reaction_sum"
+        - "Late__by_reaction_rank"
+  default: "None__no_additional_normalization"
+  output:
+    params: [ "norm_method" ]
+- display: "Compass__species"
+  ui_component: "dropdown"
+  doc: "..."
+  input:
+    preset:
+      options:
+        - "human"
+        - "mouse"
+  default: "human"
+  output:
+    params: [ "species" ]
+
+## Input UIs
+- display: "Reaction Summaries Plot: Cell groups to compare"
+  name: ui_diff_targets_cells
+  ui_component: "two-group-selection"
+  doc: "For plotting metabolic differences, this UI establishes sample/cell groupings to compare. First, you will choose a metadata column of the dataset. Then you will choose two sets of values of that metadata to compare across."
+  input:
+    files: [ "pseudobulk_discrete_metadata_summary.json" ]
+  await_files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
+  output:
+    files: [ "diff_groups_selections.json" ]
+- display: "Reaction Summaries Plot: Reaction subsystem"
+  name: ui_diff_targets_subsystem
+  ui_component: "dropdown"
+  doc: "For plotting metabolic differences, this UI establishes the set of Compass reactions to focus on."
+  input:
+    preset:
+      options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
+  await_files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
+  output: [ "diff_subsystem_target.txt" ]
+
+## Output UIs
+- display: 'Download Results - Central Carbon Metabolism'
+  ui_component: "link"
+  input:
+    "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+- display: 'Download Results - Lipid Metabolism'
+  ui_component: "link"
+  input:
+    "compass_outputs/LIPID_META_SUBSYSTEM/reactions.tsv"
+- display: 'Download Results - Amino Acid Metabolism'
+  ui_component: "link"
+  input:
+    "compass_outputs/AA_META_SUBSYSTEM/reactions.tsv"
+- display: "Display Differential Reaction Summary Plot"
+  ui_component: "plot"
+  input: [ "red_blue.png" ]
+
+## Optional dittoSeq plotting
+- display: "Set plot options"
+  ui_component: "any-dittoseq"
+  doc: "Options here determine both what type of plot to make, and how to set that plot up. For addtional details on individual inputs, see the 'Inputs of the Plot Configuration Interface' section of Vulcan's 'Help'-page documentation OR dittoSeq's own documentation. Any inputs without an exact label match within that Vulcan 'Help'-page table will map directly to some dittoSeq input for the function with the same name as your chosen plot type. You can find dittoSeq's documentation from either within R itself, run `?dittoSeq::<visualization-name>`, or from the RDRR.io page that pops up when you google the package."
+  input:
+    files:
+      data_frame: "discrete_metadata_summary.json"
+      continuous_cols: "continuous_opts.json"
+      discrete_cols: "discrete_opts.json"
+      all_cols: "all_opts.json"
+      reduction_opts: "reduction_opts.json"
+  output:
+    files: [ plot_setup.json ]
+- display: 'Download plot as R object (.Rds)'
+  ui_component: "link"
+  input: [ "plot.Rds" ]
+- display: "Display Plot"
+  ui_component: "plot"
+  input: [ "plot.out" ]
