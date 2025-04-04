@@ -22,17 +22,17 @@ rule get_dataset_and_summarize:
         "scripts/get_dataset_and_summarize.R"
 rule pseudobulk_dataset:
     params:
-        min_cells=config["min_cells"]
-        sample_id_column=config["sample_id_column"]
-        cell_type_column=config["cell_type_column"]
+        min_cells=config["min_cells"],
+        sample_id_column=config["sample_id_column"],
+        cell_type_column=config["cell_type_column"],
         norm_method=config["norm_method"]
     input:
         scd_rds="output/scdata.Rds"
     output:
-        pseudo_matrix="output/delog_pseudobulk_matrix.tsv"
-        pseudo_metadata="output/pseudobulk_metadata.tsv"
-        cell_types="output/pseudobulk_celltypes.json"
-        samples="output/pseudobulk_samples.json"
+        pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
+        pseudo_metadata="output/pseudobulk_metadata.tsv",
+        cell_types="output/pseudobulk_celltypes.json",
+        samples="output/pseudobulk_samples.json",
         discrete_metadata_summary="output/pseudobulk_discrete_metadata_summary.json"
     singularity:
         "/dscolab/vulcan/containers/archimedes-r.sif"
@@ -41,7 +41,7 @@ rule pseudobulk_dataset:
 
 rule run_compass:
     params:
-        species=config["species"]
+        species=config["species"],
         norm_method=config["norm_method"]
     input:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
@@ -89,8 +89,8 @@ rule ui_diff_targets_subsystem: #UI
         "output/diff_subsystem_target.txt"
 rule plot_red_blue:
     input:
-        subsystem="output/diff_subsystem_target.txt"
-        group_defs="output/diff_groups_selections.json"
+        subsystem="output/diff_subsystem_target.txt",
+        group_defs="output/diff_groups_selections.json",
         pseudo_metadata="output/pseudobulk_metadata.tsv"
     output:
         plot="outputs/red_blue.png"
