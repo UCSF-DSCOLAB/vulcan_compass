@@ -82,22 +82,22 @@
   ui_component: "plot"
   input: [ "red_blue.png" ]
 
-## Optional dittoSeq plotting
-- display: "Set plot options"
-  ui_component: "any-dittoseq"
-  doc: "Options here determine both what type of plot to make, and how to set that plot up. For addtional details on individual inputs, see the 'Inputs of the Plot Configuration Interface' section of Vulcan's 'Help'-page documentation OR dittoSeq's own documentation. Any inputs without an exact label match within that Vulcan 'Help'-page table will map directly to some dittoSeq input for the function with the same name as your chosen plot type. You can find dittoSeq's documentation from either within R itself, run `?dittoSeq::<visualization-name>`, or from the RDRR.io page that pops up when you google the package."
-  input:
-    files:
-      data_frame: "discrete_metadata_summary.json"
-      continuous_cols: "continuous_opts.json"
-      discrete_cols: "discrete_opts.json"
-      all_cols: "all_opts.json"
-      reduction_opts: "reduction_opts.json"
-  output:
-    files: [ plot_setup.json ]
-- display: 'Download plot as R object (.Rds)'
-  ui_component: "link"
-  input: [ "plot.Rds" ]
-- display: "Display Plot"
-  ui_component: "plot"
-  input: [ "plot.out" ]
+# ## Optional dittoSeq plotting
+# - display: "Set plot options"
+#   ui_component: "any-dittoseq"
+#   doc: "Options here determine both what type of plot to make, and how to set that plot up. For addtional details on individual inputs, see the 'Inputs of the Plot Configuration Interface' section of Vulcan's 'Help'-page documentation OR dittoSeq's own documentation. Any inputs without an exact label match within that Vulcan 'Help'-page table will map directly to some dittoSeq input for the function with the same name as your chosen plot type. You can find dittoSeq's documentation from either within R itself, run `?dittoSeq::<visualization-name>`, or from the RDRR.io page that pops up when you google the package."
+#   input:
+#     files:
+#       data_frame: "discrete_metadata_summary.json"
+#       continuous_cols: "continuous_opts.json"
+#       discrete_cols: "discrete_opts.json"
+#       all_cols: "all_opts.json"
+#       reduction_opts: "reduction_opts.json"
+#   output:
+#     files: [ plot_setup.json ]
+# - display: 'Download plot as R object (.Rds)'
+#   ui_component: "link"
+#   input: [ "plot.Rds" ]
+# - display: "Display Plot"
+#   ui_component: "plot"
+#   input: [ "plot.out" ]

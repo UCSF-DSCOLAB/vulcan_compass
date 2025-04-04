@@ -37,7 +37,7 @@ rule pseudobulk_dataset:
     singularity:
         "/dscolab/vulcan/containers/archimedes-r.sif"
     script:
-        "scripts/get_dataset_and_summarize.R"
+        "scripts/pseudobulk_data_elements.R"
 
 rule run_compass:
     params:
@@ -100,24 +100,24 @@ rule plot_red_blue:
     script:
         "scripts/plot_red_blue.py"
 
-### Optional standard scViz plotting
-rule plot_setup_ui:
-    input:
-        plotting_options="output/plotting_options.json"
-    output:
-        plot_settings="output/plot_setup.json"
+# ### Optional standard scViz plotting
+# rule plot_setup_ui:
+#     input:
+#         plotting_options="output/plotting_options.json"
+#     output:
+#         plot_settings="output/plot_setup.json"
 
-rule make_plot:
-    input:
-        scdata="output/scdata.Rds",
-        plot_setup="output/plot_setup.json",
-        plotting_options="output/plotting_options.json"
-    output:
-        plot_out="output/plot.out",
-        thumbnail="output/thumbnail.png",
-        plot_Rds="output/plot.Rds"
-    singularity:
-        "/app/archimedes-r.sif"
-    script:
-        "scripts/make_dittoSeq_plot.R"
+# rule make_plot:
+#     input:
+#         scdata="output/scdata.Rds",
+#         plot_setup="output/plot_setup.json",
+#         plotting_options="output/plotting_options.json"
+#     output:
+#         plot_out="output/plot.out",
+#         thumbnail="output/thumbnail.png",
+#         plot_Rds="output/plot.Rds"
+#     singularity:
+#         "/app/archimedes-r.sif"
+#     script:
+#         "scripts/make_dittoSeq_plot.R"
 
