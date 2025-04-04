@@ -3,5 +3,6 @@
     "species": "human",
     "min_cells": 10,
     "sample_id_column": "",
-    "cell_type_column": ""
+    "cell_type_column": "",
+    "norm_method": "None__no_additional_normalization"
 }
