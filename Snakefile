@@ -77,9 +77,10 @@ rule run_compass:
         """
 
 rule ui_diff_targets_cells: #UI
-    input:
-        - "output/pseudobulk_discrete_metadata_summary.json"
-        - "output/compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+    input: [
+        "output/pseudobulk_discrete_metadata_summary.json",
+        "output/compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+    ]
     output:
         "output/diff_groups_selections.json"
 rule ui_diff_targets_subsystem: #UI
