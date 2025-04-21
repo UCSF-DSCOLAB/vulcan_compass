@@ -64,7 +64,7 @@ rule run_compass:
             --temp-dir output/compass_output/tmp \
             --output-dir output/compass_output \
             --data {input.pseudo_matrix} \
-            --species ${species} \
+            --species ${{species}} \
             --model Human1 \
             --select-meta-subsystems {input.meta_subsystems}
         

@@ -1,9 +1,13 @@
 ## Params
 - display: "Dataset__name of sc_seq_dataset record"
-  ui_component: "string"
-  doc: "Provide the identifier ('name' attribute) of the sc_seq_dataset record you wish to explore here. Note that we definitely plan to improve this particular selection method in the future!"
+  ui_component: "magma-record"
+  doc: "Choose which sc_seq_dataset to work with."
   output:
-    params: [ "dataset_name" ]
+    preset:
+      modelName: 'sc_seq_dataset'
+      targetAtt: 'name'
+      otherAttsShow: ['group_id', 'description']
+      hasAtts: ['seurat_object']
 - display: "Pseudobulking__Minimum cell cutoff"
   ui_component: "int"
   default: 10
@@ -63,24 +67,26 @@
     preset:
       options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
   await_files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
-  output: [ "diff_subsystem_target.txt" ]
+  output:
+    files: [ "diff_subsystem_target.txt" ]
 
 ## Output UIs
 - display: 'Download Results - Central Carbon Metabolism'
   ui_component: "link"
   input:
-    "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+    files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
 - display: 'Download Results - Lipid Metabolism'
   ui_component: "link"
   input:
-    "compass_outputs/LIPID_META_SUBSYSTEM/reactions.tsv"
+    files: [ "compass_outputs/LIPID_META_SUBSYSTEM/reactions.tsv" ]
 - display: 'Download Results - Amino Acid Metabolism'
   ui_component: "link"
   input:
-    "compass_outputs/AA_META_SUBSYSTEM/reactions.tsv"
+    files: [ "compass_outputs/AA_META_SUBSYSTEM/reactions.tsv" ]
 - display: "Display Differential Reaction Summary Plot"
   ui_component: "plot"
-  input: [ "red_blue.png" ]
+  input: 
+    files: [ "red_blue.png" ]
 
 # ## Optional dittoSeq plotting
 # - display: "Set plot options"
