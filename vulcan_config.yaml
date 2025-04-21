@@ -34,7 +34,7 @@
         - "Early__depth_norm_to_metabolic_genes"
         - "Late__by_reaction_sum"
         - "Late__by_reaction_rank"
-  default: "None__no_additional_normalization"
+  default: "Early__depth_norm_to_metabolic_genes"
   output:
     params: [ "norm_method" ]
 - display: "Compass__species"

@@ -8,6 +8,7 @@ min_cells <- params['min_cells']
 samp_col <- params['sample_id_column']
 ct_col <- params['cell_type_column']
 norm_method <- params['norm_method']
+norm_genes <- input_str['target_genes']
 
 ### Function imports from essential scripts
 logger_ts <- function(...) {
@@ -25,6 +26,7 @@ sobj <- readRDS(scd_rds)
 meta <- sobj@meta.data
 
 # Counts - delog
+logger_ts("Delogging")
 norm <- GetAssayData(sobj, assay = 'RNA', slot = 'data')
 rm(sobj)
 gc(verbose=FALSE)
@@ -52,7 +54,7 @@ meta_collapse <- function(df_col, name) {
         }
     }
 }
-### Function for summarizing metadat for later UIs
+### Function for summarizing metadata for later UIs
 summarize_discrete_metadata <- function(metadata) {
     
     output <- list()
@@ -89,9 +91,12 @@ i <- 0
 # Tracking metadata skippage
 meta_ignored <- NULL
 
-if (norm_method=="early__depth_norm_to_metabolic_genes") {
-    logger_ts("Normalizing counts per cell toward metabolic genes")
-    logger_ts("NOT YET IMPLEMENTED")
+if (norm_method=="Early__depth_norm_to_metabolic_genes") {
+    logger_ts("Normalizing counts per cell toward metabolic genes only")
+    genes_in <- intersect(rownames(delog_norm), norm_genes)
+    delog_norm <- delog_norm[genes_in]
+    scale_factors <- colSums(delog_norm)/10e5
+    delog_norm <- delog_norm/scale_factors
 }
 
 logger_ts("Starting Pseudobulking")

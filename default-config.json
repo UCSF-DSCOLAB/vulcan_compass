@@ -1,8 +1,8 @@
 {
-    "dataset_name": "",
+    "dataset_name": null,
     "species": "human",
     "min_cells": 10,
     "sample_id_column": "",
     "cell_type_column": "",
-    "norm_method": "None__no_additional_normalization"
+    "norm_method": "Early__depth_norm_to_metabolic_genes"
 }
