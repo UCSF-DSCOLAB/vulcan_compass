@@ -26,7 +26,7 @@ rule pseudobulk_dataset:
         cell_type_column=config["cell_type_column"],
         norm_method=config["norm_method"]
     input:
-        target_genes="module_compass_targets/genes_targeted.txt"
+        target_genes="module_compass_targets/genes_targeted.txt",
         scd_rds="output/scdata.Rds"
     output:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
