@@ -2,8 +2,7 @@ configfile: "config.yaml"
 
 rule all:
     input:
-        thumbnail="output/red_blue.png",
-        red_blue_plot="output/red_blue.png"
+        thumbnail="output/red_blue.png"
 
 rule get_dataset_and_summarize:
     params:
@@ -47,9 +46,9 @@ rule run_compass:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
         meta_subsystems="module_compass_targets/meta_subsystems.txt"
     output:
-        carbon_reactions="output/compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv",
-        lipid_reactions="output/compass_outputs/LIPID_META_SUBSYSTEM/reactions.tsv",
-        AA_reactions="output/compass_outputs/AA_META_SUBSYSTEM/reactions.tsv"
+        carbon_reactions="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv",
+        lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
+        AA_reactions="output/compass_output/AA_META_SUBSYSTEM/reactions.tsv"
     singularity:
         "/dscolab/vulcan/containers/compass.sif"
     shell:
@@ -62,8 +61,8 @@ rule run_compass:
 
         compass \
             --num-processes 30 \
-            --temp-dir output/compass_outputs/tmp \
-            --output-dir output/compass_outputs \
+            --temp-dir output/compass_output/tmp \
+            --output-dir output/compass_output \
             --data {input.pseudo_matrix} \
             --species ${species} \
             --model Human1 \
@@ -77,24 +76,24 @@ rule run_compass:
         """
 
 rule ui_diff_targets_cells: #UI
-    input: [
+    input:
         "output/pseudobulk_discrete_metadata_summary.json",
-        "output/compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
-    ]
+        "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
     output:
         "output/diff_groups_selections.json"
 rule ui_diff_targets_subsystem: #UI
     input:
-        "output/compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+        "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
     output:
         "output/diff_subsystem_target.txt"
+
 rule plot_red_blue:
     input:
         subsystem="output/diff_subsystem_target.txt",
         group_defs="output/diff_groups_selections.json",
         pseudo_metadata="output/pseudobulk_metadata.tsv"
     output:
-        plot="outputs/red_blue.png"
+        plot="output/red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/compass.sif"
     script:
