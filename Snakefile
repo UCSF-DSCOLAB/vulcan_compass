@@ -91,7 +91,8 @@ rule ui_diff_targets_subsystem: #UI
 rule plot_red_blue:
     input:
         subsystem="output/diff_subsystem_target.txt",
-        group_defs="output/diff_groups_selections.json",
+        group_def_1="output/diff_group_1.json",
+        group_def_2="output/diff_group_2.json",
         pseudo_metadata="output/pseudobulk_metadata.tsv"
     output:
         plot="output/red_blue.png"

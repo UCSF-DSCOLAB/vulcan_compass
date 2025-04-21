@@ -60,7 +60,7 @@
     files: [ "pseudobulk_discrete_metadata_summary.json" ]
   await_files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
   output:
-    files: [ "diff_groups_selections.json" ]
+    files: [ "diff_group_1.json", "diff_group_2.json" ]
 - display: "Reaction Summaries Plot: Reaction subsystem"
   name: ui_diff_targets_subsystem
   ui_component: "dropdown"

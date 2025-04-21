@@ -1,7 +1,11 @@
+from snakemake.script import snakemake
+from archimedes.functions.ui_complements import subsetDF_index_targets
+import json
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import mannwhitneyu
+from scipy.stats import mannwhitneyu, hypergeom
 from statsmodels.stats.multitest import multipletests
 from matplotlib import __version__ as matplotlibversion
 if matplotlibversion < "3.4":
@@ -11,13 +15,17 @@ import os
 os.chdir('/krummellab/data1/danb/compass')
 
 ### Tweakable Parameters
-subsystem_target = input['subsystem']
-group_defs = input['group_defs']
+with open(snakemake.input['subsystem'], 'r') as file:
+    subsystem_target = file.read()
+with open(snakemake.input['group_def_1'], 'r') as file:
+    group_def_1 = json.load(file)
+with open(snakemake.input['group_def_2'], 'r') as file:
+    group_def_2 = json.load(file)
 
 ### Standard parameters
 reactions_file = f'output/compass_outputs/{subsystem_target}/reactions.tsv'
 reaction_metadata_file = f'output/compass_outputs/{subsystem_target}/{subsystem_target}_rxn_meta.csv'
-sample_metadata_file = input['pseudo_metadata']
+sample_metadata_file = snakemake.input['pseudo_metadata']
 
 ### Functions
 def cohens_d(x, y):
@@ -87,8 +95,8 @@ cell_metadata['manual.celltype'] = [empty_or_match(re.search(r"^.*__(.+)$", i)) 
 ################################################
 # TBD From here on... need to implement the reciprocal of js group constraint selection UI to parse groupings
 ################################################
-group_A_cells = cell_metadata.index[cell_metadata[diff_btwn_column] == diff_group_A]
-group_B_cells = cell_metadata.index[cell_metadata[diff_btwn_column] == diff_group_B]
+group_A_cells = subsetDF_index_targets(cell_metadata, group_def_1).index
+group_B_cells = subsetDF_index_targets(cell_metadata, group_def_2).index
 
 # Transform reaction penalties per cell/sample into scores that are higher the more active the reaction is predicted to be
 reaction_consistencies = get_reaction_consistencies(reaction_penalties)
@@ -117,14 +125,60 @@ items, counts = np.unique(data['SUBSYSTEM'], return_counts=True)
 items = [items[i] for i in range(len(items)) if counts[i] > 5] #filter(n() > 5) %>%
 data = data[data['SUBSYSTEM'].isin(items)]
 
+data_sig = data[data['adjusted_pval'] < 0.05].copy()
+data_sig_pos = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] > 0)].copy()
+data_sig_neg = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] < 0)].copy()
+
+subsystems = data['subsystem'].value_counts().index
+hyper_pvals_pos = []
+hyper_pvals_neg = []
+
+for subsys in subsystems:
+    #Positive
+    M = data.shape[0]
+    n = data_sig_pos.shape[0]
+    N = data[data['subsystem'] == subsys].shape[0]
+    x = data_sig_pos[data_sig_pos['subsystem'] == subsys].shape[0]
+    pval_pos = hypergeom.sf(x-1, M, n, N)
+    hyper_pvals_pos.append(pval_pos)
+
+    #Negative
+    M = data.shape[0]
+    n = data_sig_neg.shape[0]
+    N = data[data['subsystem'] == subsys].shape[0]
+    x = data_sig_neg[data_sig_neg['subsystem'] == subsys].shape[0]
+    pval_neg = hypergeom.sf(x-1, M, n, N)
+    hyper_pvals_neg.append(pval_neg)
+
+
+hyper_df_pos = pd.DataFrame({'pval': hyper_pvals_pos}, index=subsystems)
+hyper_df_pos['adjusted_pval'] = multipletests(hyper_df_pos['pval'], method='fdr_bh')[1]
+
+hyper_df_neg = pd.DataFrame({'pval': hyper_pvals_neg}, index=subsystems)
+hyper_df_neg['adjusted_pval'] = multipletests(hyper_df_neg['pval'], method='fdr_bh')[1]
+
 ### Plot
 plt.figure(figsize=(12,12))
 axs = plt.gca()
 #Sorts the reactions for plotting
-d = data[data['adjusted_pval'] < 0.1].groupby('SUBSYSTEM')['cohens_d'].median().abs()
-axs.scatter(d[d.argsort], d[d.argsort].index, alpha=0)
-color = data['cohens_d'].map(lambda x: 'r' if x >= 0 else 'b')
-alpha = data['adjusted_pval'].map(lambda x: 1.0 if x < 0.1 else 0.25)
-axs.scatter(data['cohens_d'], data['SUBSYSTEM'], c=color, alpha=alpha)
+d = data.groupby('subsystem')['cohens_d'].mean()
+color = data['cohens_d'].map(lambda x: '#E31A1C' if x >= 0 else '#1F78B4')
+size = np.array([100 if color[i] == 'orange' else 30 for i in range(len(color))])
+alpha = data['adjusted_pval'].map(lambda x: 1.0 if x < 0.05 else 0.25)
+d_color_pos = hyper_df_pos['adjusted_pval'].map(lambda x: '#FC9272' if x < 0.05 else 'black')
+d_color_neg = hyper_df_neg['adjusted_pval'].map(lambda x: '#9ECAE1' if x < 0.05 else 'black')
+d_color = pd.Series([
+    'black' if s1 == 'black' and s2 == 'black' else (s1 if s2 == 'black' else s2)
+    for s1, s2 in zip(d_color_pos, d_color_neg)
+], index=d_color_pos.index)
+
+sorted_subsystems = d[np.argsort(d)].index
+axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=50)
+axs.scatter(data[data['subsystem'].isin(sorted_subsystems)]['cohens_d'].values,
+            data[data['subsystem'].isin(sorted_subsystems)]['subsystem'].values,
+            c=color, alpha=alpha, s=size)
+axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black')
+
 axs.set_xlabel("Cohen's d")
-plt.savefig(output['plot'], dpi=300, bbox_inches="tight")
+
+plt.savefig(snakemake.output['plot'], dpi=300, bbox_inches="tight")
