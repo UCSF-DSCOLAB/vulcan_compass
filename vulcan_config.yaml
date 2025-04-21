@@ -2,12 +2,14 @@
 - display: "Dataset__name of sc_seq_dataset record"
   ui_component: "magma-record"
   doc: "Choose which sc_seq_dataset to work with."
-  output:
+  input:
     preset:
       modelName: 'sc_seq_dataset'
       targetAtt: 'name'
       otherAttsShow: ['group_id', 'description']
       hasAtts: ['seurat_object']
+  output:
+    params: [ "dataset_name" ]
 - display: "Pseudobulking__Minimum cell cutoff"
   ui_component: "int"
   default: 10
