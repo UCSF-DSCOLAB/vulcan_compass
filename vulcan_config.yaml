@@ -86,9 +86,9 @@
   input:
     files: [ "compass_outputs/AA_META_SUBSYSTEM/reactions.tsv" ]
 - display: 'Comparison Group Summaries'
-  ui_component: "markdown"
+  ui_component: "collapsible-markdown"
   input:
-    files: [ "output/diff_groups_summary.md" ]
+    files: [ "diff_groups_summary.md" ]
 - display: "Display Differential Reaction Summary Plot"
   ui_component: "plot"
   input: 

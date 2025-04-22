@@ -1,7 +1,7 @@
 from snakemake.script import snakemake
 from archimedes.functions.ui_complements import subsetDF_index_targets
 from archimedes.functions.dataflow import input_json, input_path, param, output_path
-from archimedes.functions.manipulations import unique
+from archimedes.functions.list import unique
 import pandas as pd
 
 ### Tweakable Parameters
