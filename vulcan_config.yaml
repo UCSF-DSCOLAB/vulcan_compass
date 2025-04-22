@@ -6,7 +6,7 @@
     preset:
       modelName: 'sc_seq_dataset'
       targetAtt: 'name'
-      otherAttsShow: ['group_id', 'description']
+      otherAttsShow: ['group_id', 'description', 'metadata_annots_fine', 'metadata_annots_broad']
       hasAtts: ['seurat_object']
   output:
     params: [ "dataset_name" ]
@@ -60,7 +60,7 @@
     files: [ "pseudobulk_discrete_metadata_summary.json" ]
   await_files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
   output:
-    files: [ "diff_group_1.json", "diff_group_2.json" ]
+    files: [ "diff_group_1__formula.json", "diff_group_2__formula.json" ]
 - display: "Reaction Summaries Plot: Reaction subsystem"
   name: ui_diff_targets_subsystem
   ui_component: "dropdown"

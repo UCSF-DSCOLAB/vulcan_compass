@@ -1,7 +1,4 @@
-from snakemake.script import snakemake
-from archimedes.functions.ui_complements import subsetDF_index_targets
-import json
-
+# from snakemake.script import snakemake
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,21 +8,25 @@ from matplotlib import __version__ as matplotlibversion
 if matplotlibversion < "3.4":
     print("Matplotlib versions older than 3.4 may not be able to generate figure 2E, as they do not support alpha arrays")
 
-import os
-os.chdir('/krummellab/data1/danb/compass')
-
-### Tweakable Parameters
+### Use Inputs
+group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])
+group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])
 with open(snakemake.input['subsystem'], 'r') as file:
-    subsystem_target = file.read()
-with open(snakemake.input['group_def_1'], 'r') as file:
-    group_def_1 = json.load(file)
-with open(snakemake.input['group_def_2'], 'r') as file:
-    group_def_2 = json.load(file)
+    subsystem_target = file.read().rstrip("\n")
+reaction_penalties = pd.read_csv(f'output/compass_outputs/{subsystem_target}/reactions.tsv', sep="\t", index_col = 0)
+reaction_metadata = pd.read_csv(f'output/compass_outputs/{subsystem_target}/{subsystem_target}_rxn_meta.csv', index_col = 0)
+cell_metadata = pd.read_csv(snakemake.input['pseudo_metadata'], index_col = 0)
 
-### Standard parameters
-reactions_file = f'output/compass_outputs/{subsystem_target}/reactions.tsv'
-reaction_metadata_file = f'output/compass_outputs/{subsystem_target}/{subsystem_target}_rxn_meta.csv'
-sample_metadata_file = snakemake.input['pseudo_metadata']
+### --- Quirk for this data --- ###
+# Oops... re-making from the pseudobulk's names
+import re
+def empty_or_match(search):
+    if search is None:
+        return ''
+    else:
+        return search.group(1)
+cell_metadata['manual.celltype'] = [empty_or_match(re.search(r"^.*__(.+)$", i)) for i in cell_metadata.index]
+### --- End Quirk --- ###
 
 ### Functions
 def cohens_d(x, y):
@@ -74,29 +75,6 @@ def reaction_out_index_to_id(index, reaction_metadata):
         raise Exception("reaction unknown")
 
 ##### Primary Processing
-
-### Loading needed data files
-reaction_penalties = pd.read_csv(reactions_file, sep="\t", index_col = 0)
-cell_metadata = pd.read_csv(sample_metadata_file, index_col = 0)
-reaction_metadata = pd.read_csv(reaction_metadata_file, index_col = 0)
-
-### --- Quirk for this data --- ###
-# Oops... re-making from the pseudobulk's names
-import re
-def empty_or_match(search):
-    if search is None:
-        return ''
-    else:
-        return search.group(1)
-cell_metadata['manual.celltype'] = [empty_or_match(re.search(r"^.*__(.+)$", i)) for i in cell_metadata.index]
-### --- End Quirk --- ###
-
-# Gather samples in comparator groups
-################################################
-# TBD From here on... need to implement the reciprocal of js group constraint selection UI to parse groupings
-################################################
-group_A_cells = subsetDF_index_targets(cell_metadata, group_def_1).index
-group_B_cells = subsetDF_index_targets(cell_metadata, group_def_2).index
 
 # Transform reaction penalties per cell/sample into scores that are higher the more active the reaction is predicted to be
 reaction_consistencies = get_reaction_consistencies(reaction_penalties)
