@@ -81,7 +81,7 @@ rule ui_diff_targets_cells: #UI
         "output/pseudobulk_discrete_metadata_summary.json",
         "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
     output:
-        "output/diff_groups_selections.json"
+        ["output/diff_group_1__formula.json", "output/diff_group_2__formula.json"]
 rule ui_diff_targets_subsystem: #UI
     input:
         "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
