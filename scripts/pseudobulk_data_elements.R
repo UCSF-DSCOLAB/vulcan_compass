@@ -116,12 +116,14 @@ for (ct in celltypes) {
             this_pseudo_meta <- sapply(1:ncol(meta_set), function(meta_i) {
                 meta_collapse(meta_set[,meta_i], names(meta_set)[meta_i])
             })
+            this_pseudo_meta$pseudobulk_cell_num <- sum(is_set)
             this_name <- paste0(samp, "__", ct)
             # Add column
             if (identical(pseudo_mat, NULL)) {
                 pseudo_mat <- data.frame(this_pseudo_mat)
                 colnames(pseudo_mat) <- this_name
                 pseudo_meta <- meta[1,]
+                pseudo_meta$pseudobulk_cell_num <- NA
                 pseudo_meta[1,] <- this_pseudo_meta
                 rownames(pseudo_meta) <- this_name
             } else {

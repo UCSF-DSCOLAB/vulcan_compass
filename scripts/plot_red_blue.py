@@ -15,18 +15,6 @@ with open(snakemake.input['subsystem'], 'r') as file:
     subsystem_target = file.read().rstrip("\n")
 reaction_penalties = pd.read_csv(f'output/compass_outputs/{subsystem_target}/reactions.tsv', sep="\t", index_col = 0)
 reaction_metadata = pd.read_csv(f'output/compass_outputs/{subsystem_target}/{subsystem_target}_rxn_meta.csv', index_col = 0)
-cell_metadata = pd.read_csv(snakemake.input['pseudo_metadata'], index_col = 0)
-
-### --- Quirk for this data --- ###
-# Oops... re-making from the pseudobulk's names
-import re
-def empty_or_match(search):
-    if search is None:
-        return ''
-    else:
-        return search.group(1)
-cell_metadata['manual.celltype'] = [empty_or_match(re.search(r"^.*__(.+)$", i)) for i in cell_metadata.index]
-### --- End Quirk --- ###
 
 ### Functions
 def cohens_d(x, y):

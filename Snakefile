@@ -89,13 +89,19 @@ rule ui_diff_targets_subsystem: #UI
         "output/diff_subsystem_target.txt"
 
 rule parse_groupings:
+    params:
+        sample_id_column=config["sample_id_column"],
+        cell_type_column=config["cell_type_column"]
     input:
         group_def_1="output/diff_group_1__formula.json",
         group_def_2="output/diff_group_2__formula.json",
         pseudo_metadata="output/pseudobulk_metadata.tsv"
     output:
         group_1_inds="output/diff_group_1__indexes.json",
-        group_2_inds="output/diff_group_2__indexes.json"
+        group_2_inds="output/diff_group_2__indexes.json",
+        group_1_metadata="output/diff_group_1__metadata.csv",
+        group_2_metadata="output/diff_group_2__metadata.csv",
+        groups_summary="output/diff_groups_summary.md"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
     script:
@@ -105,8 +111,7 @@ rule plot_red_blue:
     input:
         subsystem="output/diff_subsystem_target.txt",
         group_1_inds="output/diff_group_1__indexes.json",
-        group_2_inds="output/diff_group_2__indexes.json",
-        pseudo_metadata="output/pseudobulk_metadata.tsv"
+        group_2_inds="output/diff_group_2__indexes.json"
     output:
         plot="output/red_blue.png"
     singularity:
