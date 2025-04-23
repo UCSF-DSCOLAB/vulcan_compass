@@ -80,11 +80,15 @@ rule ui_diff_targets_cells: #UI
     input:
         "output/pseudobulk_discrete_metadata_summary.json",
         "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+    params:
+        ui=True
     output:
         ["output/diff_group_1__formula.json", "output/diff_group_2__formula.json"]
 rule ui_diff_targets_subsystem: #UI
     input:
         "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
+    params:
+        ui=True
     output:
         "output/diff_subsystem_target.txt"
 
@@ -118,25 +122,3 @@ rule plot_red_blue:
         "/dscolab/vulcan/containers/compass.sif"
     script:
         "scripts/plot_red_blue.py"
-
-# ### Optional standard scViz plotting
-# rule plot_setup_ui:
-#     input:
-#         plotting_options="output/plotting_options.json"
-#     output:
-#         plot_settings="output/plot_setup.json"
-
-# rule make_plot:
-#     input:
-#         scdata="output/scdata.Rds",
-#         plot_setup="output/plot_setup.json",
-#         plotting_options="output/plotting_options.json"
-#     output:
-#         plot_out="output/plot.out",
-#         thumbnail="output/thumbnail.png",
-#         plot_Rds="output/plot.Rds"
-#     singularity:
-#         "/app/archimedes-r.sif"
-#     script:
-#         "scripts/make_dittoSeq_plot.R"
-
