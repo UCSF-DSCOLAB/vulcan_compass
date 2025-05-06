@@ -1,8 +1,8 @@
-from snakemake.script import snakemake
 from archimedes.functions.ui_complements import subsetDF_index_targets
 from archimedes.functions.dataflow import input_json, input_path, param, output_path
 from archimedes.functions.list import unique
 import pandas as pd
+from snakemake.script import snakemake
 
 ### Tweakable Parameters
 group_def_1 = input_json('group_def_1')
@@ -25,8 +25,8 @@ cell_metadata['manual.celltype'] = [empty_or_match(re.search(r"^.*__(.+)$", i)) 
 ### --- End Quirk --- ###
 
 # Gather samples in comparator groups
-group_1_cells = subsetDF_index_targets(cell_metadata, group_def_1).index
-group_2_cells = subsetDF_index_targets(cell_metadata, group_def_2).index
+group_1_cells = subsetDF_index_targets(cell_metadata, group_def_1)
+group_2_cells = subsetDF_index_targets(cell_metadata, group_def_2)
 
 # Output indexes
 group_1_cells.to_series().to_csv(output_path('group_1_inds'), header=False, index=False)
@@ -46,7 +46,8 @@ def summarize_group(gnum: int, meta: pd.DataFrame):
     npseudo = len(meta.index)
     samps = unique([str(x) for x in meta[sample_col]])
     cnums = list(meta['pseudobulk_cell_num'])
-    cnums_low = [i for i in cnums if i < 100]
+    low_name = meta.loc[[i < 100 for i in cnums],:].index
+    low_num = [i for i in cnums if i < 100]
     cts = unique([str(x) for x in meta[ct_col]])
     cts_str = f': {", ".join(cts) if len(cts)<=5 else ""}'
     if npseudo < 1:
@@ -58,8 +59,11 @@ def summarize_group(gnum: int, meta: pd.DataFrame):
     summary += to_md(f'- {len(cts)} cell type(s){cts_str}')
     if npseudo <= 10 or len(samps) <= 10:
         summary += to_md(f'Note: Fewer than 10 {"pseudobulks, so statistical comparison has low N." if npseudo <= 10 else "original samples"}')
-    if len(cnums_low)>0:
-        summary += to_md(f'Note: {len(cnums_low)} pseudobulk(s) were built from fewer than 100 cells: {", ".join([str(x) for x in cnums_low])}')
+    if len(low_num)>0:
+        summary += to_md(f'Note: {len(low_num)} pseudobulk(s) were built from fewer than 100 cells:')
+        for name, num in zip(low_name, low_num):
+            summary += to_md(f'- {name}: {num} cells', 0, 1)
+        summary += to_md(f'', 0, 1)
     return summary
 full_summary = summarize_group(1, group_1_meta) + summarize_group(2, group_2_meta)
 with(open(snakemake.output['groups_summary'], 'w')) as file:
