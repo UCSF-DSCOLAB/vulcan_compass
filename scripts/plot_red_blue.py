@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import mannwhitneyu, hypergeom
 from statsmodels.stats.multitest import multipletests
 from matplotlib import __version__ as matplotlibversion
+from snakemake.script import snakemake
 if matplotlibversion < "3.4":
     print("Matplotlib versions older than 3.4 may not be able to generate figure 2E, as they do not support alpha arrays")
 

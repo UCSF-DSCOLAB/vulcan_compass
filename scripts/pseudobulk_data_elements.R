@@ -94,7 +94,7 @@ meta_ignored <- NULL
 if (norm_method=="Early__depth_norm_to_metabolic_genes") {
     logger_ts("Normalizing counts per cell toward metabolic genes only")
     genes_in <- intersect(rownames(delog_norm), norm_genes)
-    delog_norm <- delog_norm[genes_in]
+    delog_norm <- delog_norm[genes_in,]
     scale_factors <- colSums(delog_norm)/10e5
     delog_norm <- delog_norm/scale_factors
 }
