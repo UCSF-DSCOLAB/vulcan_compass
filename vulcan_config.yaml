@@ -18,12 +18,12 @@
     params: [ "min_cells" ]
 - display: "Pseudobulking__Sample Metadata Column Name"
   ui_component: "string"
-  doc: "Establishes the column name of the cells metadata that holds sample identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  doc: "Recommendation: Check the target record's '' attributes. Establishes the column name of the cells metadata that holds sample identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
   output:
     params: [ "sample_id_column" ]
 - display: "Pseudobulking__Cell-Types Metadata Column Name"
   ui_component: "string"
-  doc: "Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  doc: "Recommendation: Check the target record's 'metadata_annots_fine' or 'meatdata_annots_broad' attributes. Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
   output:
     params: [ "cell_type_column" ]
 - display: "Normalization__method"
@@ -73,18 +73,10 @@
     files: [ "diff_subsystem_target.txt" ]
 
 ## Output UIs
-- display: 'Download Results - Central Carbon Metabolism'
+- display: 'Download Compass Results'
   ui_component: "link"
   input:
-    files: [ "compass_outputs/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv" ]
-- display: 'Download Results - Lipid Metabolism'
-  ui_component: "link"
-  input:
-    files: [ "compass_outputs/LIPID_META_SUBSYSTEM/reactions.tsv" ]
-- display: 'Download Results - Amino Acid Metabolism'
-  ui_component: "link"
-  input:
-    files: [ "compass_outputs/AA_META_SUBSYSTEM/reactions.tsv" ]
+    files: [ "compass.tar.gz" ]
 - display: 'Comparison Group Summaries'
   ui_component: "collapsible-markdown"
   input:
@@ -93,23 +85,7 @@
   ui_component: "plot"
   input: 
     files: [ "red_blue.png" ]
-
-# ## Optional dittoSeq plotting
-# - display: "Set plot options"
-#   ui_component: "any-dittoseq"
-#   doc: "Options here determine both what type of plot to make, and how to set that plot up. For addtional details on individual inputs, see the 'Inputs of the Plot Configuration Interface' section of Vulcan's 'Help'-page documentation OR dittoSeq's own documentation. Any inputs without an exact label match within that Vulcan 'Help'-page table will map directly to some dittoSeq input for the function with the same name as your chosen plot type. You can find dittoSeq's documentation from either within R itself, run `?dittoSeq::<visualization-name>`, or from the RDRR.io page that pops up when you google the package."
-#   input:
-#     files:
-#       data_frame: "discrete_metadata_summary.json"
-#       continuous_cols: "continuous_opts.json"
-#       discrete_cols: "discrete_opts.json"
-#       all_cols: "all_opts.json"
-#       reduction_opts: "reduction_opts.json"
-#   output:
-#     files: [ plot_setup.json ]
-# - display: 'Download plot as R object (.Rds)'
+# - display: 'Download Stats Results'
 #   ui_component: "link"
-#   input: [ "plot.Rds" ]
-# - display: "Display Plot"
-#   ui_component: "plot"
-#   input: [ "plot.out" ]
+#   input:
+#     files: [ "stats_output.tsv" ]

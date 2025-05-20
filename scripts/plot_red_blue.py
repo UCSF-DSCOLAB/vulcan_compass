@@ -12,10 +12,18 @@ if matplotlibversion < "3.4":
 ### Use Inputs
 group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])
 group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])
+# Parse reaction file target
 with open(snakemake.input['subsystem'], 'r') as file:
-    subsystem_target = file.read().rstrip("\n")
-reaction_penalties = pd.read_csv(f'output/compass_outputs/{subsystem_target}/reactions.tsv', sep="\t", index_col = 0)
-reaction_metadata = pd.read_csv(f'output/compass_outputs/{subsystem_target}/{subsystem_target}_rxn_meta.csv', index_col = 0)
+    subsystem_full = file.read().rstrip("\n")
+subsystem = "carbon" if subsystem_full=="CENTRAL_CARBON_META_SUBSYSTEM" \
+    else "lipid" if subsystem_full=="LIPID_META_SUBSYSTEM" \
+    else "AA" if subsystem_full=="AA_META_SUBSYSTEM" \
+    else "NOT FOUND ERROR"
+reaction_suffix = "norm_sum" if snakemake.param['norm_method'] == "Late__by_reaction_sum" \
+    else "norm_rank" if snakemake.param['norm_method'] == "Late__by_reaction_rank" \
+    else "scores"
+reactions_use = pd.read_csv(snakemake.input[f'{subsystem}_reaction_{reaction_suffix}'], sep="\t", index_col = 0)
+reaction_metadata = pd.read_csv(f'output/compass_outputs/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
 
 ### Functions
 def cohens_d(x, y):
@@ -45,14 +53,6 @@ def wilcoxon_test(consistencies_matrix, group_A_cells, group_B_cells):
 		results.loc[rxn, ['wilcox_stat', 'wilcox_pval', 'cohens_d']] = stat, pval, c_d
 	results['adjusted_pval'] = np.array(multipletests(results['wilcox_pval'], method='fdr_bh')[1], dtype='float64')
 	return results
-def get_reaction_consistencies(compass_reaction_penalties, min_range=1e-3):
-    """
-        Converts the raw penalties outputs of compass into scores per reactions where higher numbers indicate more activity
-    """
-    df = -np.log(compass_reaction_penalties + 1)
-    df = df[df.max(axis=1) - df.min(axis=1) >= min_range]
-    df = df - df.min().min()
-    return df
 def reaction_out_index_to_id(index, reaction_metadata):
     # Goal: Remove '_pos' or '_neg' and ensure matches with known reactions
     if index in reaction_metadata.index:
@@ -65,13 +65,10 @@ def reaction_out_index_to_id(index, reaction_metadata):
 
 ##### Primary Processing
 
-# Transform reaction penalties per cell/sample into scores that are higher the more active the reaction is predicted to be
-reaction_consistencies = get_reaction_consistencies(reaction_penalties)
-
 # Statistical test
-# Unpaired Wilcoxon rank-sum test (equivalent ro MAnn-Whitney U test)
+# Unpaired Wilcoxon rank-sum test (equivalent ro Mann-Whitney U test)
 # Positive values indicate higher potential activity in group_A cells than group_B cells.
-wilcox_results = wilcoxon_test(reaction_consistencies, group_A_cells, group_B_cells)
+wilcox_results = wilcoxon_test(reactions_use, group_A_cells, group_B_cells)
 wilcox_results['metadata_r_id'] = ""
 for r in wilcox_results.index:
     wilcox_results.loc[r, 'metadata_r_id'] = reaction_out_index_to_id(r, reaction_metadata)
