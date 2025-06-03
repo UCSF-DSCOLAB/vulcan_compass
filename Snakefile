@@ -17,8 +17,8 @@ rule get_dataset_and_summarize:
         discrete_opts="output/scdata_discrete_opts.json",
         reduction_opts="output/scdata_reduction_opts.json"
     resources:
-        mem_mb: 100000 # 100gbs
-        runtime: "2h"
+        mem_mb=100000, # 100gbs
+        runtime="2h"
     singularity:
         "/dscolab/vulcan/containers/archimedes-r.sif"
     script:
@@ -39,8 +39,8 @@ rule pseudobulk_dataset:
         samples="output/pseudobulk_samples.json",
         discrete_metadata_summary="output/pseudobulk_discrete_metadata_summary.json"
     resources:
-        mem_mb: 100000 # 100gbs
-        runtime: "2h"
+        mem_mb=100000, # 100gbs
+        runtime="2h"
     singularity:
         "/dscolab/vulcan/containers/archimedes-r.sif"
     script:
@@ -54,8 +54,8 @@ rule run_compass:
         meta_subsystems="module_compass_targets/meta_subsystems.txt"
     threads: 30
     resources:
-        mem_mb: 150000 # 150gbs
-        runtime: "7d"
+        mem_mb=150000, # 150gbs
+        runtime="7d"
     output:
         carbon_reactions="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv",
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
