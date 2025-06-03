@@ -2,7 +2,7 @@ configfile: "config.yaml"
 
 rule all:
     input:
-        thumbnail="output/red_blue.png"
+        thumbnail="output/red_blue.png",
         compass_tgz="output/compass.tar.gz"
 
 rule get_dataset_and_summarize:
