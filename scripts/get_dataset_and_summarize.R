@@ -153,7 +153,7 @@ dataset_record <- as.vector(dataset_record_raw)
 names(dataset_record) <- colnames(dataset_record_raw)
 
 # Get the data
-dataset_url <- dataset_record[["object"]]
+dataset_url <- dataset_record[["seurat_object"]]
 dataset_path <- output_path("scdata")
 # Download directly to output location!
 x <- crul::HttpClient$new(url = dataset_url, opts = crul_opts)$get(disk = dataset_path) # Outputs status
