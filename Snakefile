@@ -89,14 +89,14 @@ rule after_compass:
         carbon_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
         carbon_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv",
         carbon_readme="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/readme.tsv",
-        lipid_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
-        lipid_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
-        lipid_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv",
-        lipid_readme="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/readme.tsv",
-        AA_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
-        AA_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
-        AA_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv",
-        AA_readme="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/readme.tsv",
+        lipid_reaction_scores="output/compass_output/LIPID_META_SUBSYSTEM/reaction_scores.tsv",
+        lipid_reaction_norm_sum="output/compass_output/LIPID_META_SUBSYSTEM/reactions_norm_sum.tsv",
+        lipid_reaction_norm_rank="output/compass_output/LIPID_META_SUBSYSTEM/reactions_norm_rank.tsv",
+        lipid_readme="output/compass_output/LIPID_META_SUBSYSTEM/readme.tsv",
+        AA_reaction_scores="output/compass_output/AA_META_SUBSYSTEM/reaction_scores.tsv",
+        AA_reaction_norm_sum="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_sum.tsv",
+        AA_reaction_norm_rank="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_rank.tsv",
+        AA_readme="output/compass_output/AA_META_SUBSYSTEM/readme.tsv",
         compass_tgz="output/compass.tar.gz"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
