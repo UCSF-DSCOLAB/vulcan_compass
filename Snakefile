@@ -157,6 +157,6 @@ rule plot_red_blue:
     output:
         plot="output/red_blue.png"
     singularity:
-        "/dscolab/vulcan/containers/compass.sif"
+        "/dscolab/vulcan/containers/archimedes-py.sif"
     script:
         "scripts/plot_red_blue.py"

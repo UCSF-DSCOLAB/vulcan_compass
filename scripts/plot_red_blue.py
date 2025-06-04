@@ -1,4 +1,3 @@
-# from snakemake.script import snakemake
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,8 +9,8 @@ if matplotlibversion < "3.4":
     print("Matplotlib versions older than 3.4 may not be able to generate figure 2E, as they do not support alpha arrays")
 
 ### Use Inputs
-group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])
-group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])
+group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])[1:]
+group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])[1:]
 # Parse reaction file target
 with open(snakemake.input['subsystem'], 'r') as file:
     subsystem_full = file.read().rstrip("\n")
@@ -31,6 +30,7 @@ def cohens_d(x, y):
                           + (len(y)-1) * np.var(y, ddof=1)) / 
                              (len(x) + len(y) - 2))
     return (np.mean(x) - np.mean(y)) / pooled_std
+
 def wilcoxon_test(consistencies_matrix, group_A_cells, group_B_cells):
 	"""
 		Performs an unpaired wilcoxon test (or mann-whitney U test) for each reaction between group_A and group_B
@@ -53,6 +53,7 @@ def wilcoxon_test(consistencies_matrix, group_A_cells, group_B_cells):
 		results.loc[rxn, ['wilcox_stat', 'wilcox_pval', 'cohens_d']] = stat, pval, c_d
 	results['adjusted_pval'] = np.array(multipletests(results['wilcox_pval'], method='fdr_bh')[1], dtype='float64')
 	return results
+
 def reaction_out_index_to_id(index, reaction_metadata):
     # Goal: Remove '_pos' or '_neg' and ensure matches with known reactions
     if index in reaction_metadata.index:
@@ -93,7 +94,7 @@ data_sig = data[data['adjusted_pval'] < 0.05].copy()
 data_sig_pos = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] > 0)].copy()
 data_sig_neg = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] < 0)].copy()
 
-subsystems = data['subsystem'].value_counts().index
+subsystems = data['SUBSYSTEM'].value_counts().index
 hyper_pvals_pos = []
 hyper_pvals_neg = []
 
@@ -101,19 +102,17 @@ for subsys in subsystems:
     #Positive
     M = data.shape[0]
     n = data_sig_pos.shape[0]
-    N = data[data['subsystem'] == subsys].shape[0]
-    x = data_sig_pos[data_sig_pos['subsystem'] == subsys].shape[0]
+    N = data[data['SUBSYSTEM'] == subsys].shape[0]
+    x = data_sig_pos[data_sig_pos['SUBSYSTEM'] == subsys].shape[0]
     pval_pos = hypergeom.sf(x-1, M, n, N)
     hyper_pvals_pos.append(pval_pos)
-
     #Negative
     M = data.shape[0]
     n = data_sig_neg.shape[0]
-    N = data[data['subsystem'] == subsys].shape[0]
-    x = data_sig_neg[data_sig_neg['subsystem'] == subsys].shape[0]
+    N = data[data['SUBSYSTEM'] == subsys].shape[0]
+    x = data_sig_neg[data_sig_neg['SUBSYSTEM'] == subsys].shape[0]
     pval_neg = hypergeom.sf(x-1, M, n, N)
     hyper_pvals_neg.append(pval_neg)
-
 
 hyper_df_pos = pd.DataFrame({'pval': hyper_pvals_pos}, index=subsystems)
 hyper_df_pos['adjusted_pval'] = multipletests(hyper_df_pos['pval'], method='fdr_bh')[1]
@@ -125,7 +124,7 @@ hyper_df_neg['adjusted_pval'] = multipletests(hyper_df_neg['pval'], method='fdr_
 plt.figure(figsize=(12,12))
 axs = plt.gca()
 #Sorts the reactions for plotting
-d = data.groupby('subsystem')['cohens_d'].mean()
+d = data.groupby('SUBSYSTEM')['cohens_d'].mean()
 color = data['cohens_d'].map(lambda x: '#E31A1C' if x >= 0 else '#1F78B4')
 size = np.array([100 if color[i] == 'orange' else 30 for i in range(len(color))])
 alpha = data['adjusted_pval'].map(lambda x: 1.0 if x < 0.05 else 0.25)
@@ -138,8 +137,8 @@ d_color = pd.Series([
 
 sorted_subsystems = d[np.argsort(d)].index
 axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=50)
-axs.scatter(data[data['subsystem'].isin(sorted_subsystems)]['cohens_d'].values,
-            data[data['subsystem'].isin(sorted_subsystems)]['subsystem'].values,
+axs.scatter(data[data['SUBSYSTEM'].isin(sorted_subsystems)]['cohens_d'].values,
+            data[data['SUBSYSTEM'].isin(sorted_subsystems)]['SUBSYSTEM'].values,
             c=color, alpha=alpha, s=size)
 axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black')
 
