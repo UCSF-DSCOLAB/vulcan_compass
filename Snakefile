@@ -30,7 +30,7 @@ rule pseudobulk_dataset:
         cell_type_column=config["cell_type_column"],
         norm_method=config["norm_method"]
     input:
-        target_genes="module_compass_targets/genes_targeted.txt",
+        target_genes="resources/genes_targeted.txt",
         scd_rds="output/scdata.Rds"
     output:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
@@ -51,7 +51,7 @@ rule run_compass:
         species=config["species"]
     input:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
-        meta_subsystems="module_compass_targets/meta_subsystems.txt"
+        meta_subsystems="resources/meta_subsystems.txt"
     threads: 30
     resources:
         mem_mb=150000, # 150gbs
@@ -128,8 +128,8 @@ rule parse_groupings:
         group_def_2="output/diff_group_2__formula.json",
         pseudo_metadata="output/pseudobulk_metadata.tsv"
     output:
-        group_1_inds="output/diff_group_1__indexes.json",
-        group_2_inds="output/diff_group_2__indexes.json",
+        group_1_inds="output/diff_group_1__indexes.csv",
+        group_2_inds="output/diff_group_2__indexes.csv",
         group_1_metadata="output/diff_group_1__metadata.csv",
         group_2_metadata="output/diff_group_2__metadata.csv",
         groups_summary="output/diff_groups_summary.md"
@@ -143,8 +143,8 @@ rule plot_red_blue:
         norm_method=config["norm_method"]
     input:
         subsystem="output/diff_subsystem_target.txt",
-        group_1_inds="output/diff_group_1__indexes.json",
-        group_2_inds="output/diff_group_2__indexes.json",
+        group_1_inds="output/diff_group_1__indexes.csv",
+        group_2_inds="output/diff_group_2__indexes.csv",
         carbon_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
         carbon_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
         carbon_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv",
