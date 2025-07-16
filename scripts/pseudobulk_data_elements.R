@@ -1,5 +1,6 @@
 suppressPackageStartupMessages({
     library(Seurat)
+    library(dataflow)
 })
 
 ### Parameters

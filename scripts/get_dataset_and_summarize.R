@@ -1,7 +1,9 @@
-library(Seurat)
-library(magmaR)
-library(dataflow)
-library(dittoSeq)
+suppressPackageStartupMessages({
+    library(Seurat)
+    library(magmaR)
+    library(dataflow)
+    library(dittoSeq)
+})
 
 # A Re-implementation of dittoSeq's getReductions because we will also need to know how many components each reductions has
 getReductionsDims <- function(object) {
