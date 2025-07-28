@@ -107,6 +107,7 @@ for (ct in celltypes) {
     logger_ts("\tworking on ", ct)
     is_cell <- cell_annots==ct
     for (samp in samples) {
+        logger_ts("\t\tworking on ", samp)
         i <- i + 1
         is_set <- is_cell & cell_samples==samp
         if (sum(is_set) > min_cells) {
@@ -130,6 +131,9 @@ for (ct in celltypes) {
             } else {
                 pseudo_mat <- cbind(pseudo_mat, this_pseudo_mat)
                 colnames(pseudo_mat)[ncol(pseudo_mat)] <- this_name
+                if (ncol(this_pseudo_meta) != ncol(pseudo_meta)) {
+                    pseudo_meta <- pseudo_meta[,colnames(this_pseudo_meta), drop = FALSE]
+                }
                 pseudo_meta <- rbind(pseudo_meta, this_pseudo_meta)
                 rownames(pseudo_meta)[nrow(pseudo_meta)] <- this_name
             }
