@@ -2,7 +2,6 @@ from archimedes.functions.dataflow import input_path, output_var, output_tsv, ou
 import pandas as pd
 import numpy as np
 from scipy.stats import rankdata
-from snakemake.script import snakemake
 
 
 ### First: Normalizations
@@ -24,6 +23,8 @@ def norm_subsystem(in_: str, out_score: str, out_sum: str, out_rank: str, out_re
     df_sum = df_score / df_score.sum(axis=0)
     output_tsv(df_sum, out_sum, snakemake)
     df_rank = np.apply_along_axis(rankdata, axis=0, arr=df_score)
+    df_rank = pd.DataFrame(df_rank, columns = df_score.columns)
+    df_rank.index = df_score.index
     output_tsv(df_rank, out_rank, snakemake)
     output_var(readme, out_readme, snakemake)
 

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import mannwhitneyu, hypergeom
 from statsmodels.stats.multitest import multipletests
 from matplotlib import __version__ as matplotlibversion
-from snakemake.script import snakemake
+import json
 if matplotlibversion < "3.4":
     print("Matplotlib versions older than 3.4 may not be able to generate figure 2E, as they do not support alpha arrays")
 
@@ -13,16 +13,16 @@ group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0
 group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])[1:]
 # Parse reaction file target
 with open(snakemake.input['subsystem'], 'r') as file:
-    subsystem_full = file.read().rstrip("\n")
+    subsystem_full = json.load(file)
 subsystem = "carbon" if subsystem_full=="CENTRAL_CARBON_META_SUBSYSTEM" \
     else "lipid" if subsystem_full=="LIPID_META_SUBSYSTEM" \
     else "AA" if subsystem_full=="AA_META_SUBSYSTEM" \
     else "NOT FOUND ERROR"
-reaction_suffix = "norm_sum" if snakemake.param['norm_method'] == "Late__by_reaction_sum" \
-    else "norm_rank" if snakemake.param['norm_method'] == "Late__by_reaction_rank" \
+reaction_suffix = "norm_sum" if snakemake.config['norm_method'] == "Late__by_reaction_sum" \
+    else "norm_rank" if snakemake.config['norm_method'] == "Late__by_reaction_rank" \
     else "scores"
 reactions_use = pd.read_csv(snakemake.input[f'{subsystem}_reaction_{reaction_suffix}'], sep="\t", index_col = 0)
-reaction_metadata = pd.read_csv(f'output/compass_outputs/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
+reaction_metadata = pd.read_csv(f'output/compass_output/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
 
 ### Functions
 def cohens_d(x, y):

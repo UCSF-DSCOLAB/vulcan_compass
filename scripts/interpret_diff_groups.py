@@ -2,16 +2,15 @@ from archimedes.functions.ui_complements import subsetDF_index_targets
 from archimedes.functions.dataflow import input_json, input_path, param, output_path
 from archimedes.functions.list import unique
 import pandas as pd
-from snakemake.script import snakemake
 
 ### Tweakable Parameters
-group_def_1 = input_json('group_def_1')
-group_def_2 = input_json('group_def_1')
-sample_metadata_file = input_path('pseudo_metadata')
-sample_col = param('sample_id_column')
-ct_col = param('cell_type_column')
+group_def_1 = input_json('group_def_1', snakemake)
+group_def_2 = input_json('group_def_2', snakemake)
+sample_metadata_file = input_path('pseudo_metadata', snakemake)
+sample_col = param('sample_id_column', snakemake)
+ct_col = param('cell_type_column', snakemake)
 
-cell_metadata = pd.read_csv(sample_metadata_file, index_col = 0)
+cell_metadata = pd.read_csv(sample_metadata_file, sep='\t', index_col = 0)
 
 ### --- Quirk for this data --- ###
 # Oops... re-making from the pseudobulk's names
@@ -29,14 +28,14 @@ group_1_cells = subsetDF_index_targets(cell_metadata, group_def_1)
 group_2_cells = subsetDF_index_targets(cell_metadata, group_def_2)
 
 # Output indexes
-group_1_cells.to_series().to_csv(output_path('group_1_inds'), header=False, index=False)
-group_2_cells.to_series().to_csv(output_path('group_2_inds'), header=False, index=False)
+group_1_cells.to_series().to_csv(output_path('group_1_inds', snakemake), header=False, index=False)
+group_2_cells.to_series().to_csv(output_path('group_2_inds', snakemake), header=False, index=False)
 
 # Output full metadata
 group_1_meta = cell_metadata.loc[group_1_cells,:]
-group_1_meta.to_csv(output_path('group_1_metadata'))
+group_1_meta.to_csv(output_path('group_1_metadata', snakemake))
 group_2_meta = cell_metadata.loc[group_2_cells,:]
-group_2_meta.to_csv(output_path('group_2_metadata'))
+group_2_meta.to_csv(output_path('group_2_metadata', snakemake))
 
 # Summarize group contents
 def to_md(text: str, indent: int = 0, extra_lines: int = 2):
@@ -66,5 +65,5 @@ def summarize_group(gnum: int, meta: pd.DataFrame):
         summary += to_md(f'', 0, 1)
     return summary
 full_summary = summarize_group(1, group_1_meta) + summarize_group(2, group_2_meta)
-with(open(snakemake.output['groups_summary'], 'w')) as file:
+with(open(output_path('groups_summary', snakemake), 'w')) as file:
     file.write(full_summary)

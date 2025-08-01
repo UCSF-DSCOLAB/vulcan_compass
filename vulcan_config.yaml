@@ -58,7 +58,7 @@
   doc: "For plotting metabolic differences, this UI establishes sample/cell groupings to compare. First, you will choose a metadata column of the dataset. Then you will choose two sets of values of that metadata to compare across."
   input:
     files: [ "pseudobulk_discrete_metadata_summary.json" ]
-  await_files: [ "compass_outputs" ]
+  await_files: [ "compass_output" ]
   output:
     files: [ "diff_group_1__formula.json", "diff_group_2__formula.json" ]
 - display: "Reaction Summaries Plot: Reaction subsystem"
@@ -68,7 +68,7 @@
   input:
     preset:
       options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
-  await_files: [ "compass_outputs" ]
+  await_files: [ "compass_output" ]
   output:
     files: [ "diff_subsystem_target.txt" ]
 

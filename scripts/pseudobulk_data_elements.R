@@ -59,7 +59,7 @@ meta_collapse <- function(df_col, name) {
 summarize_discrete_metadata <- function(metadata) {
     
     output <- list()
-    for (i in getMetas(scdata)) {
+    for (i in colnames(metadata)) {
         this_data <- metadata[,i, drop = TRUE]
         if (!is.numeric(this_data)) {
             # Remove any empty levels, but keep order if already a factor
@@ -107,17 +107,18 @@ for (ct in celltypes) {
     logger_ts("\tworking on ", ct)
     is_cell <- cell_annots==ct
     for (samp in samples) {
-        logger_ts("\t\tworking on ", samp)
+        # logger_ts("\t\tworking on ", samp)
         i <- i + 1
         is_set <- is_cell & cell_samples==samp
         if (sum(is_set) > min_cells) {
             # Trim matrix and make dense
             delog_norm_set <- as.matrix(delog_norm[,is_set])
-            meta_set <- meta[is_set,]
             this_pseudo_mat <- apply(delog_norm_set, 1, mean)
-            this_pseudo_meta <- sapply(1:ncol(meta_set), function(meta_i) {
-                meta_collapse(meta_set[,meta_i], names(meta_set)[meta_i])
-            })
+            meta_set <- meta[is_set,]
+            this_pseudo_meta <- meta_set[1,,drop=FALSE]
+            for (meta_i in 1:ncol(meta_set)) {
+                this_pseudo_meta[1,meta_i] <- meta_collapse(meta_set[,meta_i], names(meta_set)[meta_i])
+            }
             this_pseudo_meta$pseudobulk_cell_num <- sum(is_set)
             this_name <- paste0(samp, "__", ct)
             # Add column
@@ -165,14 +166,14 @@ if (length(meta_ignored)>0) {
 logger_ts("Outputting Expression Matrix")
 write.table(
     pseudo_mat,
-    file = output_path(pseudo_matrix),
+    file = output_path("pseudo_matrix"),
     sep = "\t", col.names = TRUE, row.names = TRUE, quote = FALSE
 )
 
 logger_ts("Outputting Metadata")
 write.table(
     pseudo_meta,
-    output_path(pseudo_metadata),
+    output_path("pseudo_metadata"),
     sep = "\t", col.names = TRUE, row.names = TRUE, quote = TRUE
 )
 output_json(summarize_discrete_metadata(pseudo_meta), 'discrete_metadata_summary')
