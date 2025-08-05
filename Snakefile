@@ -132,13 +132,12 @@ rule ui_diff_targets_cells: #UI
         ["output/diff_group_1__formula.json", "output/diff_group_2__formula.json"]
 
 rule parse_groupings:
-    params:
-        sample_id_column=config["sample_id_column"],
-        cell_type_column=config["cell_type_column"]
     input:
         group_def_1="output/diff_group_1__formula.json",
         group_def_2="output/diff_group_2__formula.json",
-        pseudo_metadata="output/pseudobulk_metadata.tsv"
+        pseudo_metadata="output/pseudobulk_metadata.tsv",
+        sample_id_column="output/sample_metadata.txt",
+        cell_type_column="output/celltype_metadata.txt"
     output:
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
