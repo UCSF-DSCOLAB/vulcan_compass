@@ -1,5 +1,5 @@
 ## Params
-- display: "Dataset__name of sc_seq_dataset record"
+- display: "1__Dataset__name of sc_seq_dataset record"
   ui_component: "magma-record"
   doc: "Choose which sc_seq_dataset to work with."
   input:
@@ -10,36 +10,24 @@
       hasAtts: ['seurat_object']
   output:
     params: [ "dataset_name" ]
-- display: "Pseudobulking__Minimum cell cutoff"
+- display: "2__Pseudobulking__Minimum cell cutoff"
   ui_component: "int"
   default: 10
   doc: "Establishes the minimum number of cells to use in pseudobulking the dataset. Pseudobulking will be skipped for a given sample and cell type if there are fewer than this many cells."
   output:
     params: [ "min_cells" ]
-- display: "Pseudobulking__Sample Metadata Column Name"
-  ui_component: "string"
-  doc: "Recommendation: Check the target record's '' attributes. Establishes the column name of the cells metadata that holds sample identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
-  output:
-    params: [ "sample_id_column" ]
-- display: "Pseudobulking__Cell-Types Metadata Column Name"
-  ui_component: "string"
-  doc: "Recommendation: Check the target record's 'metadata_annots_fine' or 'meatdata_annots_broad' attributes. Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
-  output:
-    params: [ "cell_type_column" ]
-- display: "Normalization__method"
+- display: "2__Pseudobulking__Re-Normalize within metabolic genes"
   ui_component: "dropdown"
-  doc: "Establishes additional normalization to be performed. The best or preferred method is currently unknown, so we offer all options that the compass team reported assessing. Options are:\n\t-None: Utilize read-depth normalization of original data and don't apply anything after running Compass.\n\t-Early__depth_norm_to_metabolic_genes: Re-apply read-depth normalization after trimming to only genes that will be used by Compass.\n\t-Late__by_reaction_sum: Utilize read-depth normalization of original data for running compass, then normalize all reaction scores, per sample, based on their proportion of the sum of all calculated reaction scores.\n\t-Late__by_reaction_rank: Utilize read-depth normalization of original data for running compass, then apply a rank-based normalization to compass outputs, per sample, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
+  doc: "Establishes whether to pseudobulked counts data should be normalized towards counts of all genes of the dataset versus towards only the metabolic genes that will be used by Compass."
   input:
     preset:
       options: 
-        - "None__no_additional_normalization"
-        - "Early__depth_norm_to_metabolic_genes"
-        - "Late__by_reaction_sum"
-        - "Late__by_reaction_rank"
-  default: "Early__depth_norm_to_metabolic_genes"
+        - "No__To_all_genes"
+        - "Yes__Only_to_metabolic_genes"
+  default: "Yes__Only_to_metabolic_genes"
   output:
-    params: [ "norm_method" ]
-- display: "Compass__species"
+    params: [ "pre_process_norm_method" ]
+- display: "3__Compass__species"
   ui_component: "dropdown"
   doc: "..."
   input:
@@ -50,8 +38,43 @@
   default: "human"
   output:
     params: [ "species" ]
+- display: "4__Post-processing__Reaction Score Normalization Method"
+  ui_component: "dropdown"
+  doc: "Establishes if and how to normalize metabolic reaction scores (the negative log transformation of directly output reaction penalties) after compass has been run. The preferred method is currently unknown. Options are:\n\t-\"None\": use scores as-is.\n\t-\"Sum\": normalize reaction scores based on their proportion out of the sum of each subsystem's reaction scores.\n\t-\"Rank\": apply rank-based normalization to compass outputs, per sample/pseudobulk, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
+  input:
+    preset:
+      options:
+        - "None__as-is"
+        - "Sum__divide_by_sum_per_susbsystem"
+        - "Rank__rank_reactions_per_pseudobulk"
+  default: "Rank__rank_reactions_per_pseudobulk"
+  output:
+    params: [ "post_process_norm_method" ]
+- display: "4__Post-processing__Reaction subsystem target"
+  name: ui_diff_targets_subsystem
+  ui_component: "dropdown"
+  doc: "This UI establishes the metabolic subsystem to plot. Note: All three subsystems will be run through compass regardless, so you will be able to cycle through each while analyzing!"
+  input:
+    preset:
+      options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
+  output:
+    params: [ "post_process_subsystem" ]
 
 ## Input UIs
+- display: "Pseudobulking: Sample Metadata Column Name"
+  ui_component: "dropdown"
+  doc: "Recommendation: Check the target record's '' attributes. Establishes the column name of the cells metadata that holds sample identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  input:
+    files: ["scdata_discrete_opts.json", "scdata_sample_rec.json"]
+  output:
+    params: [ "sample_metadata.txt" ]
+- display: "Pseudobulking: Cell-Types Metadata Column Name"
+  ui_component: "dropdown"
+  doc: "Recommendation: Check the target record's 'metadata_annots_fine' or 'meatdata_annots_broad' attributes. Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  input:
+    files: ["scdata_discrete_opts.json", "scdata_celltype_rec.json"]
+  output:
+    files: [ "celltype_metadata.txt" ]
 - display: "Reaction Summaries Plot: Cell groups to compare"
   name: ui_diff_targets_cells
   ui_component: "two-group-selection"
@@ -61,16 +84,6 @@
   await_files: [ "compass_output" ]
   output:
     files: [ "diff_group_1__formula.json", "diff_group_2__formula.json" ]
-- display: "Reaction Summaries Plot: Reaction subsystem"
-  name: ui_diff_targets_subsystem
-  ui_component: "dropdown"
-  doc: "For plotting metabolic differences, this UI establishes the set of Compass reactions to focus on."
-  input:
-    preset:
-      options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
-  await_files: [ "compass_output" ]
-  output:
-    files: [ "diff_subsystem_target.txt" ]
 
 ## Output UIs
 - display: 'Download Compass Results'

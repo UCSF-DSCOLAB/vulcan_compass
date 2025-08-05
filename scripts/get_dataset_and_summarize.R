@@ -186,3 +186,20 @@ output_json(toNestedOptionsSet(all_opts), 'all_opts')
 output_json(toNestedOptionsSet(continuous_opts), 'continuous_opts') # Needs to be nestedOptionSet
 output_json(discrete_opts, 'discrete_opts')
 output_json(reduction_opts, 'reduction_opts')
+
+# Sample and cell-type metadata recommendations
+celltype_rec <- if (!idenctical(c(dataset_record[["metadata_annots_fine"]], dataset_record[["metadata_annots_broad"]]))) {
+    paste0(c(dataset_record[["metadata_annots_fine"]], dataset_record[["metadata_annots_broad"]]), collapse = " or ")
+} else if (!identical(dataset_record[["metadata_clustering"]])) {
+    dataset_record[["metadata_clustering"]]
+} else {
+    "None provided by project authors"
+}
+output_json(celltype_rec, 'celltype_rec')
+
+sample_rec <- if (!idenctical(c(dataset_record[["metadata_sample"]]))) {
+    dataset_record[["metadata_sample"]]
+} else {
+    "None provided by project authors"
+}
+output_json(sample_rec, 'sample_rec')

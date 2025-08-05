@@ -92,7 +92,7 @@ i <- 0
 # Tracking metadata skippage
 meta_ignored <- NULL
 
-if (norm_method=="Early__depth_norm_to_metabolic_genes") {
+if (norm_method=="Yes__Only_to_metabolic_genes") {
     logger_ts("Normalizing counts per cell toward metabolic genes only")
     genes_in <- intersect(rownames(delog_norm), norm_genes)
     delog_norm <- delog_norm[genes_in,]

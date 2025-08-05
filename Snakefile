@@ -15,7 +15,9 @@ rule get_dataset_and_summarize:
         all_opts="output/scdata_all_opts.json",
         continuous_opts="output/scdata_continuous_opts.json",
         discrete_opts="output/scdata_discrete_opts.json",
-        reduction_opts="output/scdata_reduction_opts.json"
+        reduction_opts="output/scdata_reduction_opts.json",
+        sample_rec="output/scdata_sample_rec.json",
+        celltype_rec="output/scdata_celltype_rec.json"
     resources:
         mem_mb=100000, # 100gbs
         runtime="2h"
@@ -23,14 +25,31 @@ rule get_dataset_and_summarize:
         "/dscolab/vulcan/containers/archimedes-r.sif"
     script:
         "scripts/get_dataset_and_summarize.R"
+
+rule ui_select_sample_metadata:
+    input:
+        ["output/scdata_discrete_opts.json"]
+    params:
+        ui=True
+    output:
+        ["output/sample_metadata.txt"]
+
+rule ui_select_cell_type_metadata:
+    input:
+        ["output/scdata_discrete_opts.json"]
+    params:
+        ui=True
+    output:
+        ["output/celltype_metadata.txt"]
+
 rule pseudobulk_dataset:
     params:
         min_cells=config["min_cells"],
-        sample_id_column=config["sample_id_column"],
-        cell_type_column=config["cell_type_column"],
-        norm_method=config["norm_method"]
+        norm_method=config["pre_process_norm_method"]
     input:
         target_genes="resources/genes_targeted.txt",
+        sample_id_column="output/sample_metadata.txt",
+        cell_type_column="output/celltype_metadata.txt",
         scd_rds="output/scdata.Rds"
     output:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
@@ -111,13 +130,6 @@ rule ui_diff_targets_cells: #UI
         ui=True
     output:
         ["output/diff_group_1__formula.json", "output/diff_group_2__formula.json"]
-rule ui_diff_targets_subsystem: #UI
-    input:
-        "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
-    params:
-        ui=True
-    output:
-        "output/diff_subsystem_target.txt"
 
 rule parse_groupings:
     params:
@@ -140,9 +152,9 @@ rule parse_groupings:
 
 rule plot_red_blue:
     params:
-        norm_method=config["norm_method"]
+        norm_method=config["post_process_norm_method"]
+        subsystem=config["post_process_subsystem"]
     input:
-        subsystem="output/diff_subsystem_target.txt",
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
         carbon_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",

@@ -18,8 +18,8 @@ subsystem = "carbon" if subsystem_full=="CENTRAL_CARBON_META_SUBSYSTEM" \
     else "lipid" if subsystem_full=="LIPID_META_SUBSYSTEM" \
     else "AA" if subsystem_full=="AA_META_SUBSYSTEM" \
     else "NOT FOUND ERROR"
-reaction_suffix = "norm_sum" if snakemake.config['norm_method'] == "Late__by_reaction_sum" \
-    else "norm_rank" if snakemake.config['norm_method'] == "Late__by_reaction_rank" \
+reaction_suffix = "norm_sum" if snakemake.config['norm_method'] == "Sum__divide_by_sum_per_susbsystem" \
+    else "norm_rank" if snakemake.config['norm_method'] == "Rank__rank_reactions_per_pseudobulk" \
     else "scores"
 reactions_use = pd.read_csv(snakemake.input[f'{subsystem}_reaction_{reaction_suffix}'], sep="\t", index_col = 0)
 reaction_metadata = pd.read_csv(f'output/compass_output/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)

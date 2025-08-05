@@ -2,7 +2,6 @@
     "dataset_name": null,
     "species": "human",
     "min_cells": 10,
-    "sample_id_column": "",
-    "cell_type_column": "",
-    "norm_method": "Early__depth_norm_to_metabolic_genes"
+    "pre_process_norm_method": "Yes__Only_to_metabolic_genes",
+    "post_process_norm_method": "Rank__rank_reactions_per_pseudobulk"
 }
