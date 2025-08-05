@@ -152,7 +152,7 @@ rule parse_groupings:
 
 rule plot_red_blue:
     params:
-        norm_method=config["post_process_norm_method"]
+        norm_method=config["post_process_norm_method"],
         subsystem=config["post_process_subsystem"]
     input:
         group_1_inds="output/diff_group_1__indexes.csv",
