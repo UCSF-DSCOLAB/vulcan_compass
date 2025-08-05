@@ -3,5 +3,6 @@
     "species": "human",
     "min_cells": 10,
     "pre_process_norm_method": "Yes__Only_to_metabolic_genes",
-    "post_process_norm_method": "Rank__rank_reactions_per_pseudobulk"
+    "post_process_norm_method": "Rank__rank_reactions_per_pseudobulk",
+    "post_process_subsystem": "LIPID_META_SUBSYSTEM"
 }

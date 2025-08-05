@@ -54,6 +54,7 @@
   name: ui_diff_targets_subsystem
   ui_component: "dropdown"
   doc: "This UI establishes the metabolic subsystem to plot. Note: All three subsystems will be run through compass regardless, so you will be able to cycle through each while analyzing!"
+  default: "LIPID_META_SUBSYSTEM"
   input:
     preset:
       options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
