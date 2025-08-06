@@ -15,6 +15,7 @@ rule get_dataset_and_summarize:
         all_opts="output/scdata_all_opts.json",
         continuous_opts="output/scdata_continuous_opts.json",
         discrete_opts="output/scdata_discrete_opts.json",
+        discrete_opts_without_recs="output/scdata_discrete_opts_no_recs_added.json",
         reduction_opts="output/scdata_reduction_opts.json",
         sample_rec="output/scdata_sample_rec.json",
         celltype_rec="output/scdata_celltype_rec.json"
@@ -28,7 +29,7 @@ rule get_dataset_and_summarize:
 
 rule ui_select_sample_metadata:
     input:
-        ["output/scdata_discrete_opts.json"]
+        ["output/scdata_discrete_opts_no_recs_added.json"]
     params:
         ui=True
     output:
@@ -36,7 +37,7 @@ rule ui_select_sample_metadata:
 
 rule ui_select_cell_type_metadata:
     input:
-        ["output/scdata_discrete_opts.json"]
+        ["output/scdata_discrete_opts_no_recs_added.json"]
     params:
         ui=True
     output:

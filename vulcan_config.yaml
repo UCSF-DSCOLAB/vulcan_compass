@@ -63,17 +63,19 @@
 
 ## Input UIs
 - display: "Pseudobulking: Sample Metadata Column Name"
+  name: ui_select_sample_metadata
   ui_component: "dropdown"
   doc: "Recommendation: Check the target record's '' attributes. Establishes the column name of the cells metadata that holds sample identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
   input:
-    files: ["scdata_discrete_opts.json", "scdata_sample_rec.json"]
+    files: ["scdata_discrete_opts_no_recs_added.json", "scdata_sample_rec.json"]
   output:
-    params: [ "sample_metadata.txt" ]
+    files: [ "sample_metadata.txt" ]
 - display: "Pseudobulking: Cell-Types Metadata Column Name"
+  name: ui_select_cell_type_metadata
   ui_component: "dropdown"
   doc: "Recommendation: Check the target record's 'metadata_annots_fine' or 'meatdata_annots_broad' attributes. Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
   input:
-    files: ["scdata_discrete_opts.json", "scdata_celltype_rec.json"]
+    files: ["scdata_discrete_opts_no_recs_added.json", "scdata_celltype_rec.json"]
   output:
     files: [ "celltype_metadata.txt" ]
 - display: "Reaction Summaries Plot: Cell groups to compare"
