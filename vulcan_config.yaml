@@ -40,7 +40,7 @@
     params: [ "species" ]
 - display: "4__Post-processing__Reaction Score Normalization Method"
   ui_component: "dropdown"
-  doc: "Establishes if and how to normalize metabolic reaction scores (the negative log transformation of directly output reaction penalties) after compass has been run. The preferred method is currently unknown. Options are:\n\t-\"None\": use scores as-is.\n\t-\"Sum\": normalize reaction scores based on their proportion out of the sum of each subsystem's reaction scores.\n\t-\"Rank\": apply rank-based normalization to compass outputs, per sample/pseudobulk, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
+  doc: "Establishes if and how to normalize metabolic reaction scores (the negative log transformation of directly output reaction penalties) after compass has been run. The preferred method is currently unknown. Options are:\n\t-\"None\": use scores as-is.\n\t-\"Sum\": normalize reaction scores based on their proportion out of the sum of each meta-subsystem's reaction scores.\n\t-\"Rank\": apply rank-based normalization to compass outputs, per sample/pseudobulk, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
   input:
     preset:
       options:
@@ -50,16 +50,15 @@
   default: "Rank__rank_reactions_per_pseudobulk"
   output:
     params: [ "post_process_norm_method" ]
-- display: "4__Post-processing__Reaction subsystem target"
-  name: ui_diff_targets_subsystem
+- display: "4__Post-processing__Reaction meta-subsystem target"
   ui_component: "dropdown"
-  doc: "This UI establishes the metabolic subsystem to plot. Note: All three subsystems will be run through compass regardless, so you will be able to cycle through each while analyzing!"
+  doc: "This UI establishes the metabolic meta-subsystem to plot. Note: All three meta-subsystems will be run through compass regardless, so you will be able to cycle through each while analyzing!"
   default: "LIPID_META_SUBSYSTEM"
   input:
     preset:
       options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
   output:
-    params: [ "post_process_subsystem" ]
+    params: [ "post_process_meta_subsystem" ]
 
 ## Input UIs
 - display: "Pseudobulking: Sample Metadata Column Name"
@@ -101,7 +100,11 @@
   ui_component: "plot"
   input: 
     files: [ "red_blue.png" ]
-# - display: 'Download Stats Results'
-#   ui_component: "link"
-#   input:
-#     files: [ "stats_output.tsv" ]
+- display: 'Download Stats Results - Reactions'
+  ui_component: "link"
+  input:
+    files: [ "group_diff_reaction_stats.tsv" ]
+- display: 'Download Stats Results - Subsystems'
+  ui_component: "link"
+  input:
+    files: [ "group_diff_subsystem_stats.tsv" ]

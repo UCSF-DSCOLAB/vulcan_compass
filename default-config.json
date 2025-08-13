@@ -4,5 +4,5 @@
     "min_cells": null,
     "pre_process_norm_method": null,
     "post_process_norm_method": null,
-    "post_process_subsystem": null
+    "post_process_meta_subsystem": null
 }

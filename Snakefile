@@ -153,7 +153,7 @@ rule parse_groupings:
 rule plot_red_blue:
     params:
         norm_method=config["post_process_norm_method"],
-        subsystem=config["post_process_subsystem"]
+        meta_subsystem=config["post_process_meta_subsystem"]
     input:
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
@@ -167,6 +167,8 @@ rule plot_red_blue:
         AA_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
         AA_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
+        reaction_stats_csv="output/group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/group_diff_subsystem_stats.tsv",
         plot="output/red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
