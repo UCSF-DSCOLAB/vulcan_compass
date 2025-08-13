@@ -174,6 +174,7 @@ continuous_opts <- plotting_options['Cell_Features'] # [] subsets the top-level 
 continuous_opts$Cell_Metadata <- setdiff(plotting_options[['Cell_Metadata']], names(discrete_metadata_summary))
 
 discrete_opts <- names(discrete_metadata_summary)
+discrete_opts_without_recs <- grep("^_Recommended_", discrete_opts, invert = TRUE, value = TRUE)
 
 all_opts <- plotting_options[c('Cell_Features', 'Cell_Metadata')]
 all_opts$Recommended_Metadata <- names(plotting_options$Recommended_Metadata)
@@ -185,4 +186,25 @@ output_json(discrete_metadata_summary, 'discrete_metadata_summary')
 output_json(toNestedOptionsSet(all_opts), 'all_opts')
 output_json(toNestedOptionsSet(continuous_opts), 'continuous_opts') # Needs to be nestedOptionSet
 output_json(discrete_opts, 'discrete_opts')
+output_json(discrete_opts_without_recs, 'discrete_opts_without_recs')
 output_json(reduction_opts, 'reduction_opts')
+
+# Sample and cell-type metadata recommendations
+annot_atts <- c(dataset_record[["metadata_annots_fine"]], dataset_record[["metadata_annots_broad"]])
+celltype_rec <- if (!identical(c(NA, NA), annot_atts)) {
+    # Recommend annotation metadata if it exists 
+    paste0(annot_atts[!is.na(annot_atts)], collapse = " or ")
+} else if (!identical(NA, dataset_record[["metadata_clustering"]])) {
+    # If not, recommend cluster metadata if it exists
+    dataset_record[["metadata_clustering"]]
+} else {
+    "None provided by project authors"
+}
+output_json(celltype_rec, 'celltype_rec')
+
+sample_rec <- if (!identical(NULL, c(dataset_record[["metadata_sample"]]))) {
+    dataset_record[["metadata_sample"]]
+} else {
+    "None provided by project authors"
+}
+output_json(sample_rec, 'sample_rec')

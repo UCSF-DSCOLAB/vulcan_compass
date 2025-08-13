@@ -15,7 +15,10 @@ rule get_dataset_and_summarize:
         all_opts="output/scdata_all_opts.json",
         continuous_opts="output/scdata_continuous_opts.json",
         discrete_opts="output/scdata_discrete_opts.json",
-        reduction_opts="output/scdata_reduction_opts.json"
+        discrete_opts_without_recs="output/scdata_discrete_opts_no_recs_added.json",
+        reduction_opts="output/scdata_reduction_opts.json",
+        sample_rec="output/scdata_sample_rec.json",
+        celltype_rec="output/scdata_celltype_rec.json"
     resources:
         mem_mb=100000, # 100gbs
         runtime="2h"
@@ -23,14 +26,31 @@ rule get_dataset_and_summarize:
         "/dscolab/vulcan/containers/archimedes-r.sif"
     script:
         "scripts/get_dataset_and_summarize.R"
+
+rule ui_select_sample_metadata:
+    input:
+        ["output/scdata_discrete_opts_no_recs_added.json"]
+    params:
+        ui=True
+    output:
+        ["output/sample_metadata.txt"]
+
+rule ui_select_cell_type_metadata:
+    input:
+        ["output/scdata_discrete_opts_no_recs_added.json"]
+    params:
+        ui=True
+    output:
+        ["output/celltype_metadata.txt"]
+
 rule pseudobulk_dataset:
     params:
         min_cells=config["min_cells"],
-        sample_id_column=config["sample_id_column"],
-        cell_type_column=config["cell_type_column"],
-        norm_method=config["norm_method"]
+        pre_process_norm_method=config["pre_process_norm_method"]
     input:
         target_genes="resources/genes_targeted.txt",
+        sample_id_column="output/sample_metadata.txt",
+        cell_type_column="output/celltype_metadata.txt",
         scd_rds="output/scdata.Rds"
     output:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
@@ -111,22 +131,14 @@ rule ui_diff_targets_cells: #UI
         ui=True
     output:
         ["output/diff_group_1__formula.json", "output/diff_group_2__formula.json"]
-rule ui_diff_targets_subsystem: #UI
-    input:
-        "output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv"
-    params:
-        ui=True
-    output:
-        "output/diff_subsystem_target.txt"
 
 rule parse_groupings:
-    params:
-        sample_id_column=config["sample_id_column"],
-        cell_type_column=config["cell_type_column"]
     input:
         group_def_1="output/diff_group_1__formula.json",
         group_def_2="output/diff_group_2__formula.json",
-        pseudo_metadata="output/pseudobulk_metadata.tsv"
+        pseudo_metadata="output/pseudobulk_metadata.tsv",
+        sample_id_column="output/sample_metadata.txt",
+        cell_type_column="output/celltype_metadata.txt"
     output:
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
@@ -140,9 +152,9 @@ rule parse_groupings:
 
 rule plot_red_blue:
     params:
-        norm_method=config["norm_method"]
+        post_process_norm_method=config["post_process_norm_method"],
+        post_process_meta_subsystem=config["post_process_meta_subsystem"]
     input:
-        subsystem="output/diff_subsystem_target.txt",
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
         carbon_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
@@ -155,6 +167,8 @@ rule plot_red_blue:
         AA_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
         AA_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
+        reaction_stats_csv="output/group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/group_diff_subsystem_stats.tsv",
         plot="output/red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"

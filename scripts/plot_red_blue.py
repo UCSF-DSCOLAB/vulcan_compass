@@ -12,14 +12,14 @@ if matplotlibversion < "3.4":
 group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])[1:]
 group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])[1:]
 # Parse reaction file target
-with open(snakemake.input['subsystem'], 'r') as file:
+with open(snakemake.config['post_process_meta_subsystem'], 'r') as file:
     subsystem_full = json.load(file)
 subsystem = "carbon" if subsystem_full=="CENTRAL_CARBON_META_SUBSYSTEM" \
     else "lipid" if subsystem_full=="LIPID_META_SUBSYSTEM" \
     else "AA" if subsystem_full=="AA_META_SUBSYSTEM" \
     else "NOT FOUND ERROR"
-reaction_suffix = "norm_sum" if snakemake.config['norm_method'] == "Late__by_reaction_sum" \
-    else "norm_rank" if snakemake.config['norm_method'] == "Late__by_reaction_rank" \
+reaction_suffix = "norm_sum" if snakemake.config['post_process_norm_method'] == "Sum__divide_by_sum_per_susbsystem" \
+    else "norm_rank" if snakemake.config['post_process_norm_method'] == "Rank__rank_reactions_per_pseudobulk" \
     else "scores"
 reactions_use = pd.read_csv(snakemake.input[f'{subsystem}_reaction_{reaction_suffix}'], sep="\t", index_col = 0)
 reaction_metadata = pd.read_csv(f'output/compass_output/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
@@ -90,6 +90,8 @@ items, counts = np.unique(data['SUBSYSTEM'], return_counts=True)
 items = [items[i] for i in range(len(items)) if counts[i] > 5] #filter(n() > 5) %>%
 data = data[data['SUBSYSTEM'].isin(items)]
 
+data.to_csv(snakemake.output['reaction_stats_csv'], sep='\t')
+
 data_sig = data[data['adjusted_pval'] < 0.05].copy()
 data_sig_pos = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] > 0)].copy()
 data_sig_neg = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] < 0)].copy()
@@ -120,6 +122,16 @@ hyper_df_pos['adjusted_pval'] = multipletests(hyper_df_pos['pval'], method='fdr_
 hyper_df_neg = pd.DataFrame({'pval': hyper_pvals_neg}, index=subsystems)
 hyper_df_neg['adjusted_pval'] = multipletests(hyper_df_neg['pval'], method='fdr_bh')[1]
 
+pd.DataFrame(
+    {
+        'Group1_higher_hypergeom_pval': hyper_pvals_pos,
+        'Group1_higher_adjusted_pval': hyper_df_pos['adjusted_pval'],
+        'Group2_higher_hypergeom_pval': hyper_pvals_neg,
+        'Group2_higher_adjusted_pval': hyper_df_neg['adjusted_pval']
+    },
+    index=subsystems
+).to_csv(snakemake.output['subsystem_stats_csv'], sep='\t')
+
 ### Plot
 plt.figure(figsize=(12,12))
 axs = plt.gca()
@@ -140,8 +152,10 @@ axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_co
 axs.scatter(data[data['SUBSYSTEM'].isin(sorted_subsystems)]['cohens_d'].values,
             data[data['SUBSYSTEM'].isin(sorted_subsystems)]['SUBSYSTEM'].values,
             c=color, alpha=alpha, s=size)
-axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black')
+axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black', label='mean of all reactions')
 
-axs.set_xlabel("Cohen's d")
+axs.set_xlabel(f"(higher in Group 2)                          Cohen's d                          (higher in Group 1)")
+
+plt.legend()
 
 plt.savefig(snakemake.output['plot'], dpi=300, bbox_inches="tight")

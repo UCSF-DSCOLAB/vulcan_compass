@@ -7,8 +7,8 @@ import pandas as pd
 group_def_1 = input_json('group_def_1', snakemake)
 group_def_2 = input_json('group_def_2', snakemake)
 sample_metadata_file = input_path('pseudo_metadata', snakemake)
-sample_col = param('sample_id_column', snakemake)
-ct_col = param('cell_type_column', snakemake)
+sample_col = input_json('sample_id_column', snakemake)
+ct_col = input_json('cell_type_column', snakemake)
 
 cell_metadata = pd.read_csv(sample_metadata_file, sep='\t', index_col = 0)
 

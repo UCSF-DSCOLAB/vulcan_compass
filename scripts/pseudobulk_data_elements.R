@@ -8,7 +8,7 @@ scd_rds <- input_path('scd_rds')
 min_cells <- input_num('min_cells')
 samp_col <- input_str('sample_id_column')
 ct_col <- input_str('cell_type_column')
-norm_method <- input_str('norm_method')
+norm_method <- input_str('pre_process_norm_method')
 norm_genes <- input_str('target_genes')
 
 ### Function imports from essential scripts
@@ -22,19 +22,15 @@ logger <- function(...) {
 ### Data Input
 logger_ts("Loading Data and Prepping")
 sobj <- readRDS(scd_rds)
+logger_ts('Done')
 
 # Metadata, per-cell
 meta <- sobj@meta.data
 
 # Counts - delog
 logger_ts("Delogging")
-norm <- GetAssayData(sobj, assay = 'RNA', slot = 'data')
+counts <- GetAssayData(sobj, assay = 'RNA', layer = 'counts')
 rm(sobj)
-gc(verbose=FALSE)
-delog_norm <- norm
-delog_norm@x <- exp(delog_norm@x)
-stopifnot(identical(delog_norm[5,6], exp(norm[5,6])))
-rm(norm)
 gc(verbose=FALSE)
 
 ### Function for metadata collapse
@@ -81,9 +77,11 @@ summarize_discrete_metadata <- function(metadata) {
 # Cells
 cell_annots <- meta[,ct_col]
 celltypes <- unique(cell_annots)
+celltypes <- celltypes[!is.na(celltypes)]
 # Donors/Samples
 cell_samples <- meta[,samp_col]
 samples <- unique(cell_samples)
+samples <- samples[!is.na(samples)]
 # Tracking skippage due to min_cells
 skipped_sample <- NULL
 skipped_cell <- NULL
@@ -92,28 +90,28 @@ i <- 0
 # Tracking metadata skippage
 meta_ignored <- NULL
 
-if (norm_method=="Early__depth_norm_to_metabolic_genes") {
+if (norm_method=="Yes__Only_to_metabolic_genes") {
     logger_ts("Normalizing counts per cell toward metabolic genes only")
-    genes_in <- intersect(rownames(delog_norm), norm_genes)
-    delog_norm <- delog_norm[genes_in,]
-    scale_factors <- colSums(delog_norm)/10e5
-    delog_norm <- delog_norm/scale_factors
+    genes_in <- intersect(rownames(counts), norm_genes)
+    counts <- counts[genes_in,]
 }
+scale_factors <- colSums(counts)/10e5
+counts <- counts/scale_factors
 
 logger_ts("Starting Pseudobulking")
 pseudo_mat <- NULL
 pseudo_meta <- NULL
 for (ct in celltypes) {
     logger_ts("\tworking on ", ct)
-    is_cell <- cell_annots==ct
+    is_cell <- cell_annots==ct & !is.na(cell_annots)
     for (samp in samples) {
         # logger_ts("\t\tworking on ", samp)
         i <- i + 1
-        is_set <- is_cell & cell_samples==samp
+        is_set <- is_cell & cell_samples==samp & !is.na(cell_samples)
         if (sum(is_set) > min_cells) {
             # Trim matrix and make dense
-            delog_norm_set <- as.matrix(delog_norm[,is_set])
-            this_pseudo_mat <- apply(delog_norm_set, 1, mean)
+            counts_set <- as.matrix(counts[,is_set])
+            this_pseudo_mat <- apply(counts_set, 1, mean)
             meta_set <- meta[is_set,]
             this_pseudo_meta <- meta_set[1,,drop=FALSE]
             for (meta_i in 1:ncol(meta_set)) {
@@ -146,7 +144,7 @@ for (ct in celltypes) {
         }
     }
 }
-rownames(pseudo_mat) <- rownames(delog_norm)
+rownames(pseudo_mat) <- rownames(counts)
 
 logger_ts("Pseudobulking Complete")
 if (length(skipped_i)>0) {
