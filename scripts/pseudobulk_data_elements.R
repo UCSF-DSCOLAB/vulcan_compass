@@ -8,7 +8,7 @@ scd_rds <- input_path('scd_rds')
 min_cells <- input_num('min_cells')
 samp_col <- input_str('sample_id_column')
 ct_col <- input_str('cell_type_column')
-norm_method <- input_str('norm_method')
+norm_method <- input_str('pre_process_norm_method')
 norm_genes <- input_str('target_genes')
 
 ### Function imports from essential scripts

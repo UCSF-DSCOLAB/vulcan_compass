@@ -46,7 +46,7 @@ rule ui_select_cell_type_metadata:
 rule pseudobulk_dataset:
     params:
         min_cells=config["min_cells"],
-        norm_method=config["pre_process_norm_method"]
+        pre_process_norm_method=config["pre_process_norm_method"]
     input:
         target_genes="resources/genes_targeted.txt",
         sample_id_column="output/sample_metadata.txt",
@@ -152,8 +152,8 @@ rule parse_groupings:
 
 rule plot_red_blue:
     params:
-        norm_method=config["post_process_norm_method"],
-        meta_subsystem=config["post_process_meta_subsystem"]
+        post_process_norm_method=config["post_process_norm_method"],
+        post_process_meta_subsystem=config["post_process_meta_subsystem"]
     input:
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
