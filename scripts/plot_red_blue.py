@@ -12,14 +12,14 @@ if matplotlibversion < "3.4":
 group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])[1:]
 group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])[1:]
 # Parse reaction file target
-with open(snakemake.input['subsystem'], 'r') as file:
+with open(snakemake.input['post_process_subsystem'], 'r') as file:
     subsystem_full = json.load(file)
 subsystem = "carbon" if subsystem_full=="CENTRAL_CARBON_META_SUBSYSTEM" \
     else "lipid" if subsystem_full=="LIPID_META_SUBSYSTEM" \
     else "AA" if subsystem_full=="AA_META_SUBSYSTEM" \
     else "NOT FOUND ERROR"
-reaction_suffix = "norm_sum" if snakemake.config['norm_method'] == "Sum__divide_by_sum_per_susbsystem" \
-    else "norm_rank" if snakemake.config['norm_method'] == "Rank__rank_reactions_per_pseudobulk" \
+reaction_suffix = "norm_sum" if snakemake.config['post_process_norm_method'] == "Sum__divide_by_sum_per_susbsystem" \
+    else "norm_rank" if snakemake.config['post_process_norm_method'] == "Rank__rank_reactions_per_pseudobulk" \
     else "scores"
 reactions_use = pd.read_csv(snakemake.input[f'{subsystem}_reaction_{reaction_suffix}'], sep="\t", index_col = 0)
 reaction_metadata = pd.read_csv(f'output/compass_output/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
@@ -140,8 +140,10 @@ axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_co
 axs.scatter(data[data['SUBSYSTEM'].isin(sorted_subsystems)]['cohens_d'].values,
             data[data['SUBSYSTEM'].isin(sorted_subsystems)]['SUBSYSTEM'].values,
             c=color, alpha=alpha, s=size)
-axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black')
+axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black', label='mean of all reactions')
 
-axs.set_xlabel("Cohen's d")
+axs.set_xlabel(f"(higher in Group 2)                          Cohen's d                          (higher in Group 1)")
+
+plt.legend()
 
 plt.savefig(snakemake.output['plot'], dpi=300, bbox_inches="tight")
