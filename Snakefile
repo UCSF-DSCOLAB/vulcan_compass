@@ -66,7 +66,7 @@ rule pseudobulk_dataset:
     script:
         "scripts/pseudobulk_data_elements.R"
 
-rule ui_diff_targets_cells: #UI
+rule set_gurobi_license: #UI
     params:
         ui=True
     output:
