@@ -7,7 +7,7 @@ default-resources:
     runtime: 60 # in min
     mem_mb: 20000 # 20gbs
     nodes: 1
-    # slurm_extra: "exclude c4-n20"
+    singularity-args: ' "-B output/gurobi.lic:/src/compass/compass/gurobi.lic" '
 
 jobs: 5 # How many jobs can we execute in parallel
 printshellcmds: True

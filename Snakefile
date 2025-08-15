@@ -66,6 +66,12 @@ rule pseudobulk_dataset:
     script:
         "scripts/pseudobulk_data_elements.R"
 
+rule ui_diff_targets_cells: #UI
+    params:
+        ui=True
+    output:
+        ["output/gurobi.lic"]
+
 rule run_compass:
     params:
         species=config["species"]
@@ -81,7 +87,7 @@ rule run_compass:
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
         AA_reactions="output/compass_output/AA_META_SUBSYSTEM/reactions.tsv"
     singularity:
-        "/dscolab/vulcan/containers/compass.sif"
+        "/dscolab/vulcan/containers/compass-personal-license.sif"
     shell:
         """
         if [ "{params.species}" = "human" ]; then
