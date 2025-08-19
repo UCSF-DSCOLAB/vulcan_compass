@@ -63,7 +63,7 @@
 ## Input UIs
 - display: "Gurobi License"
   name: set_gurobi_license
-  ui_component: "string"
+  ui_component: "multiline-string"
   doc: "... sets the gurobi license for running compass"
   output:
     files: ["gurobi.lic"]

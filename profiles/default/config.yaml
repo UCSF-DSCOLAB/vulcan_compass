@@ -11,4 +11,4 @@ default-resources:
 jobs: 5 # How many jobs can we execute in parallel
 printshellcmds: True
 restart-times: 0 # How many times do retry jobs that fail
-singularity-args: ' "-B output/gurobi.lic:/src/compass/compass/gurobi.lic" '
+singularity-args: " -B output/gurobi.lic:/src/compass/compass/gurobi.lic "
