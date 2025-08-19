@@ -75,8 +75,8 @@ rule pseudobulk_dataset:
 rule run_compass:
     params:
         species=config["species"]
-        gurobi_lic="output/gurobi.lic"
     input:
+        gurobi_lic="output/gurobi.lic",
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
         meta_subsystems="resources/meta_subsystems.txt"
     threads: 30
