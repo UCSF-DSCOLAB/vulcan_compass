@@ -5,6 +5,12 @@ rule all:
         thumbnail="output/red_blue.png",
         compass_tgz="output/compass.tar.gz"
 
+rule set_gurobi_license: #UI
+    params:
+        ui=True
+    output:
+        ["output/gurobi.lic"]
+
 rule get_dataset_and_summarize:
     params:
         dataset_name=config["dataset_name"]
@@ -66,15 +72,10 @@ rule pseudobulk_dataset:
     script:
         "scripts/pseudobulk_data_elements.R"
 
-rule set_gurobi_license: #UI
-    params:
-        ui=True
-    output:
-        ["output/gurobi.lic"]
-
 rule run_compass:
     params:
         species=config["species"]
+        gurobi_lic="output/gurobi.lic"
     input:
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
         meta_subsystems="resources/meta_subsystems.txt"
