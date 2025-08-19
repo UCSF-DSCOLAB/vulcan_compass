@@ -61,12 +61,12 @@
     params: [ "post_process_meta_subsystem" ]
 
 ## Input UIs
-- display: "Gurobi License"
-  name: set_gurobi_license
+- display: "Provide Gurobi License"
+  name: get_gurobi_license
   ui_component: "multiline-string"
   doc: "... sets the gurobi license for running compass"
   output:
-    files: ["gurobi.lic"]
+    files: ["gurobi_license_string.txt"]
 - display: "Pseudobulking: Sample Metadata Column Name"
   name: ui_select_sample_metadata
   ui_component: "dropdown"

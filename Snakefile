@@ -5,11 +5,21 @@ rule all:
         thumbnail="output/red_blue.png",
         compass_tgz="output/compass.tar.gz"
 
-rule set_gurobi_license: #UI
+rule get_gurobi_license: #UI
     params:
         ui=True
     output:
-        ["output/gurobi.lic"]
+        ["output/gurobi_license_string.txt"]
+
+rule fix_license_formatting:
+    input:
+        txt="output/gurobi_license_string.txt",
+    output:
+        lic="output/gurobi.lic"
+    shell:
+        """
+        sed 's/"//g' {input.txt} | sed 's/\\n/\n/g' > {output.lic}
+        """
 
 rule get_dataset_and_summarize:
     params:
