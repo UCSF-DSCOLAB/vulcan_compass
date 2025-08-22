@@ -1,6 +1,14 @@
 # Workflow for: Targeted Compass Anaylsis of Pseudobulked Single-cell Datasets
 
-This workflow enables differential analysis of Lipid, Amino Acid, and Central Carbon Metabolic Reaction Activities across samples after psuedobulking a single-cell RNAseq dataset. 
+This workflow enables differential analysis of Lipid, Amino Acid, and Central Carbon Metabolic Reaction Activities across samples after psuedobulking a single-cell RNAseq dataset.
+
+## Obtaining your License to run this workflow
+
+The proprietary Gurobi Optimizer is an inherent component that speeds up the Compass algorithm.  Luckily, Academic licenses are free.
+
+Obtain your 'gurobi.lic' by following the instructions at [this page](https://support.gurobi.com/hc/en-us/articles/13232844297489-How-do-I-set-up-a-Web-License-Service-WLS-license). Then provide the contents of this file to the associated workflow input.
+
+## The Workflow in a bit more detail
 
 The workflow starts with asking a few key parameterizations:
 - dataset selection

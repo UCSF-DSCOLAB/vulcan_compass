@@ -12,8 +12,7 @@ if matplotlibversion < "3.4":
 group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])[1:]
 group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])[1:]
 # Parse reaction file target
-with open(snakemake.config['post_process_meta_subsystem'], 'r') as file:
-    subsystem_full = json.load(file)
+subsystem_full = snakemake.config['post_process_meta_subsystem']
 subsystem = "carbon" if subsystem_full=="CENTRAL_CARBON_META_SUBSYSTEM" \
     else "lipid" if subsystem_full=="LIPID_META_SUBSYSTEM" \
     else "AA" if subsystem_full=="AA_META_SUBSYSTEM" \

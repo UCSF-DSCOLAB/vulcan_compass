@@ -5,6 +5,23 @@ rule all:
         thumbnail="output/red_blue.png",
         compass_tgz="output/compass.tar.gz"
 
+rule get_gurobi_license: #UI
+    params:
+        ui=True
+    output:
+        ["output/gurobi_license_string.txt"]
+
+rule fix_license_formatting:
+    input:
+        txt="output/gurobi_license_string.txt",
+    output:
+        lic="output/gurobi.lic"
+    run:
+        with open(input.txt, 'r') as input_file:
+            text=input_file.read().strip()
+        with open(output.lic, 'w') as output_file:
+            output_file.write(text.replace('"','').replace('\\n', '\n'))
+
 rule get_dataset_and_summarize:
     params:
         dataset_name=config["dataset_name"]
@@ -70,6 +87,7 @@ rule run_compass:
     params:
         species=config["species"]
     input:
+        gurobi_lic="output/gurobi.lic",
         pseudo_matrix="output/delog_pseudobulk_matrix.tsv",
         meta_subsystems="resources/meta_subsystems.txt"
     threads: 30
@@ -81,7 +99,7 @@ rule run_compass:
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
         AA_reactions="output/compass_output/AA_META_SUBSYSTEM/reactions.tsv"
     singularity:
-        "/dscolab/vulcan/containers/compass.sif"
+        "/dscolab/vulcan/containers/compass-personal-license.sif"
     shell:
         """
         if [ "{params.species}" = "human" ]; then
