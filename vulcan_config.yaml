@@ -61,10 +61,10 @@
     params: [ "post_process_meta_subsystem" ]
 
 ## Input UIs
-- display: "Provide Gurobi License"
+- display: "Provide your Gurobi License"
   name: get_gurobi_license
   ui_component: "multiline-string"
-  doc: "... sets the gurobi license for running compass"
+  doc: "Provide your personal gurobi.lic file's contents here to establish your license for this integral tool within the Compass algorithm. Follow instructions linked within the help-doc behind the '<book> Workflow' button above, or also described in the Compass team's GitHub repo at https://github.com/wagnerlab-berkeley/Compass?tab=readme-ov-file#obtain-a-gurobi-wls-license"
   output:
     files: ["gurobi_license_string.txt"]
 - display: "Pseudobulking: Sample Metadata Column Name"

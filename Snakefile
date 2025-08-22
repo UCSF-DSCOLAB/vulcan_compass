@@ -16,10 +16,11 @@ rule fix_license_formatting:
         txt="output/gurobi_license_string.txt",
     output:
         lic="output/gurobi.lic"
-    shell:
-        """
-        sed 's/"//g' {input.txt} | sed 's/\\n/\n/g' > {output.lic}
-        """
+    run:
+        with open(input.txt, 'r') as input_file:
+            text=input_file.read().strip()
+        with open(output.lic, 'w') as output_file:
+            output_file.write(text.replace('"','').replace('\\n', '\n'))
 
 rule get_dataset_and_summarize:
     params:
