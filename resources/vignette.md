@@ -6,7 +6,7 @@ This workflow enables differential analysis of Lipid, Amino Acid, and Central Ca
 
 The proprietary Gurobi Optimizer is an inherent component that speeds up the Compass algorithm.  Luckily, Academic licenses are free.
 
-Obtain your 'gurobi.lic' by following the instructions at [this page](https://support.gurobi.com/hc/en-us/articles/13232844297489-How-do-I-set-up-a-Web-License-Service-WLS-license). Then provide the contents of this file to a workflow input.
+Obtain your 'gurobi.lic' by following the instructions at [this page](https://support.gurobi.com/hc/en-us/articles/13232844297489-How-do-I-set-up-a-Web-License-Service-WLS-license). Then provide the contents of this file to the associated workflow input.
 
 ## The Workflow in a bit more detail
 
