@@ -94,6 +94,10 @@
     files: [ "diff_group_1__formula.json", "diff_group_2__formula.json" ]
 
 ## Output UIs
+- display: "Display Pseudobulk QC"
+  ui_component: "plot"
+  input:
+    files: [ "pseudo_qc.png" ]
 - display: 'Download Compass Results'
   ui_component: "link"
   input:

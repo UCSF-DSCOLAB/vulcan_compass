@@ -3,7 +3,8 @@ configfile: "config.yaml"
 rule all:
     input:
         thumbnail="output/red_blue.png",
-        compass_tgz="output/compass.tar.gz"
+        compass_tgz="output/compass.tar.gz",
+        all_plots="output/pseudo_qc.png"
 
 rule get_gurobi_license: #UI
     params:
@@ -82,6 +83,20 @@ rule pseudobulk_dataset:
         "/dscolab/vulcan/containers/archimedes-r.sif"
     script:
         "scripts/pseudobulk_data_elements.R"
+
+rule pseudobulk_qc_plotting:
+    params:
+        pre_process_norm_method=config["pre_process_norm_method"]
+    input:
+        sample_id_column="output/sample_metadata.txt",
+        cell_type_column="output/celltype_metadata.txt",
+        pseudo_metadata="output/pseudobulk_metadata.tsv",
+    output:
+        all_plots="output/pseudo_qc.png"
+    singularity:
+        "/dscolab/vulcan/containers/archimedes-r.sif"
+    script:
+        "scripts/pseudobulk_qc.R"
 
 rule run_compass:
     params:
