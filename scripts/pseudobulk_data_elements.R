@@ -103,8 +103,8 @@ for (ct in celltypes) {
         is_set <- is_cell & cell_samples==samp & !is.na(cell_samples)
         if (sum(is_set) > min_cells) {
             # Trim matrix and make dense
-            counts_set <- as.matrix(counts[,is_set])
-            this_pseudo_mat <- apply(counts_set, 1, mean)
+            counts_set <- counts[,is_set]
+            this_pseudo_mat <- rowSums(counts)
             meta_set <- meta[is_set,]
             this_pseudo_meta <- meta_set[1,,drop=FALSE]
             for (meta_i in 1:ncol(meta_set)) {

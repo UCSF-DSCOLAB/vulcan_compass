@@ -33,7 +33,7 @@ height <- 2.5*3 + 0.075*n_char_max_ct
 
 ### Plot!
 ts_log('Plotting')
-png(output_path('all_plots'), w = width, h = height)
+png(output_path('all_plots'), w = width*75, h = height*75, res=75)
 yPlot(
     df,
     c('scaling_factors__all_genes', 'scaling_factors__metab_targets', 'metabolism_counts_fraction'),
