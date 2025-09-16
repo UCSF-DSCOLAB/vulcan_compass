@@ -104,7 +104,7 @@ for (ct in celltypes) {
         if (sum(is_set) > min_cells) {
             # Trim matrix and make dense
             counts_set <- counts[,is_set]
-            this_pseudo_mat <- rowSums(counts)
+            this_pseudo_mat <- rowSums(counts_set)
             meta_set <- meta[is_set,]
             this_pseudo_meta <- meta_set[1,,drop=FALSE]
             for (meta_i in 1:ncol(meta_set)) {
