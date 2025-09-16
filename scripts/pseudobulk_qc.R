@@ -38,10 +38,15 @@ yPlot(
     df,
     c('scaling_factors__all_genes', 'scaling_factors__metab_targets', 'metabolism_counts_fraction'),
     ct_col,
+    main = "Metabolism Ammount Comparison Metrics",
+    split.ncol = 1,
+    split.adjust = list(scale = 'free_y'),
     plots = reps,
     vlnplot.quantiles = c(0.25, 0.5, 0.75),
+    vlnplot.lineweight = 0.5,
+    boxplot.width = 0.5,
+    boxplot.lineweight = 0.5,
     legend.show = FALSE
-)
 dev.off()
 
 ts_log('DONE')
