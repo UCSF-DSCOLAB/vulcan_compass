@@ -39,6 +39,7 @@ yPlot(
     c('scaling_factors__all_genes', 'scaling_factors__metab_targets', 'metabolism_counts_fraction'),
     ct_col,
     main = "Metabolism Ammount Comparison Metrics",
+    sub = "per sample/pseudobulk, grouped by cell type",
     split.ncol = 1,
     split.adjust = list(scale = 'free_y'),
     plots = reps,
