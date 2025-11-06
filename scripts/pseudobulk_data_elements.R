@@ -1,6 +1,7 @@
 suppressPackageStartupMessages({
     library(Seurat)
     library(dataflow)
+    library(edgeR)
 })
 
 ### Parameters
@@ -90,14 +91,6 @@ i <- 0
 # Tracking metadata skippage
 meta_ignored <- NULL
 
-if (norm_method=="Yes__Only_to_metabolic_genes") {
-    logger_ts("Normalizing counts per cell toward metabolic genes only")
-    genes_in <- intersect(rownames(counts), norm_genes)
-    counts <- counts[genes_in,]
-}
-scale_factors <- colSums(counts)/10e5
-counts <- counts/scale_factors
-
 logger_ts("Starting Pseudobulking")
 pseudo_mat <- NULL
 pseudo_meta <- NULL
@@ -108,10 +101,10 @@ for (ct in celltypes) {
         # logger_ts("\t\tworking on ", samp)
         i <- i + 1
         is_set <- is_cell & cell_samples==samp & !is.na(cell_samples)
-        if (sum(is_set) > min_cells) {
+        if (sum(is_set) >= min_cells) {
             # Trim matrix and make dense
-            counts_set <- as.matrix(counts[,is_set])
-            this_pseudo_mat <- apply(counts_set, 1, mean)
+            counts_set <- counts[,is_set]
+            this_pseudo_mat <- rowSums(counts_set)
             meta_set <- meta[is_set,]
             this_pseudo_meta <- meta_set[1,,drop=FALSE]
             for (meta_i in 1:ncol(meta_set)) {
@@ -161,9 +154,31 @@ if (length(meta_ignored)>0) {
     pseudo_meta <- pseudo_meta[,!colnames(pseudo_meta)%in% meta_ignored]
 }
 
+logger_ts("Calculating scaling factors and metabolic gene percentages")
+dgelist_all <- calcNormFactors(DGEList(counts = pseudo_mat), method = "none")
+
+genes_in <- intersect(rownames(pseudo_mat), norm_genes)
+metab_mat <- pseudo_mat[genes_in,]
+dgelist_metab <- calcNormFactors(DGEList(counts = metab_mat), method = "none")
+
+pseudo_meta$metabolism_counts_fraction <- colSums(metab_mat)/colSums(pseudo_mat)
+pseudo_meta$scaling_factors__all_genes <- dgelist_all$samples$norm.factors
+pseudo_meta$scaling_factors__metab_targets <- dgelist_metab$samples$norm.factors
+
+if (norm_method=="Yes__Only_to_metabolic_genes") {
+    logger_ts("Note: Focusing toward metabolic genes only")
+    pseudo_norm <- cpm(dgelist_metab, log = FALSE)
+} else if (norm_method!="No__To_all_genes") {
+    logger_ts("norm_method: ", norm_method)
+    stop("WORKFLOW ERROR: unexpected value for norm_method")
+} else {
+    logger_ts("Note: Not focusing solely on metabolic genes")
+    pseudo_norm <- cpm(dgelist_all, log = FALSE)
+}
+
 logger_ts("Outputting Expression Matrix")
 write.table(
-    pseudo_mat,
+    pseudo_norm,
     file = output_path("pseudo_matrix"),
     sep = "\t", col.names = TRUE, row.names = TRUE, quote = FALSE
 )
