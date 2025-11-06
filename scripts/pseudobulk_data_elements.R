@@ -101,7 +101,7 @@ for (ct in celltypes) {
         # logger_ts("\t\tworking on ", samp)
         i <- i + 1
         is_set <- is_cell & cell_samples==samp & !is.na(cell_samples)
-        if (sum(is_set) > min_cells) {
+        if (sum(is_set) >= min_cells) {
             # Trim matrix and make dense
             counts_set <- counts[,is_set]
             this_pseudo_mat <- rowSums(counts_set)
@@ -155,11 +155,11 @@ if (length(meta_ignored)>0) {
 }
 
 logger_ts("Calculating scaling factors and metabolic gene percentages")
-dgelist_all <- calcNormFactors(DGEList(counts = pseudo_mat), method = "TMM")
+dgelist_all <- calcNormFactors(DGEList(counts = pseudo_mat), method = "none")
 
 genes_in <- intersect(rownames(pseudo_mat), norm_genes)
 metab_mat <- pseudo_mat[genes_in,]
-dgelist_metab <- calcNormFactors(DGEList(counts = metab_mat), method = "TMM")
+dgelist_metab <- calcNormFactors(DGEList(counts = metab_mat), method = "none")
 
 pseudo_meta$metabolism_counts_fraction <- colSums(metab_mat)/colSums(pseudo_mat)
 pseudo_meta$scaling_factors__all_genes <- dgelist_all$samples$norm.factors
@@ -167,13 +167,13 @@ pseudo_meta$scaling_factors__metab_targets <- dgelist_metab$samples$norm.factors
 
 if (norm_method=="Yes__Only_to_metabolic_genes") {
     logger_ts("Note: Focusing toward metabolic genes only")
-    pseudo_norm <- cpm(dgelist_all, log = FALSE)
+    pseudo_norm <- cpm(dgelist_metab, log = FALSE)
 } else if (norm_method!="No__To_all_genes") {
     logger_ts("norm_method: ", norm_method)
     stop("WORKFLOW ERROR: unexpected value for norm_method")
 } else {
-    logger_ts("Note: not focusing solely on metabolic genes")
-    pseudo_norm <- cpm(dgelist_metab, log = FALSE)
+    logger_ts("Note: Not focusing solely on metabolic genes")
+    pseudo_norm <- cpm(dgelist_all, log = FALSE)
 }
 
 logger_ts("Outputting Expression Matrix")
