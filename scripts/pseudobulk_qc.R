@@ -47,7 +47,7 @@ yPlot(
     vlnplot.lineweight = 0.5,
     boxplot.width = 0.5,
     boxplot.lineweight = 0.5,
-    legend.show = FALSE
+    legend.show = FALSE)
 dev.off()
 
 ts_log('DONE')
