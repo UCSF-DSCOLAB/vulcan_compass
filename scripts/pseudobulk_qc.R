@@ -36,7 +36,7 @@ ts_log('Plotting')
 png(output_path('all_plots'), w = width*75, h = height*75, res=75)
 yPlot(
     df,
-    c('scaling_factors__all_genes', 'scaling_factors__metab_targets', 'metabolism_counts_fraction'),
+    c('metabolism_counts_fraction', 'avg_nCounts_per_cell__all_genes', 'avg_nCounts_per_cell__metab_targets'),
     ct_col,
     main = "Metabolism Ammount Comparison Metrics",
     sub = "per sample/pseudobulk, grouped by cell type",
@@ -45,8 +45,11 @@ yPlot(
     plots = reps,
     vlnplot.quantiles = c(0.25, 0.5, 0.75),
     vlnplot.lineweight = 0.5,
-    boxplot.width = 0.5,
+    vlnplot.scaling = "width",
+    boxplot.width = 0.8,
+    boxplot.fill = FALSE,
     boxplot.lineweight = 0.5,
+    jitter.width = 0.8,
     legend.show = FALSE)
 dev.off()
 
