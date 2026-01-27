@@ -1,7 +1,7 @@
 ## Params
 - display: "1__Dataset__name of sc_seq_dataset record"
   ui_component: "magma-record"
-  doc: "Choose which sc_seq_dataset to work with."
+  doc: "Choose which sc_seq_dataset to work with. Note that you may wish to also explore this data in another workspace, using the 'scViz' pipeline, to gain some familiarity with the dataset."
   input:
     preset:
       modelName: 'sc_seq_dataset'
