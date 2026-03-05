@@ -23,11 +23,11 @@ med_n_samp <- median(table(df[,samp_col], df[,ct_col]))
 
 ### Establish some plot features
 ts_log('Prepping to plot')
-reps <- ifelse(
-    med_n_samp <= 20,
-    c("jitter", "boxplot"),
+reps <- if (med_n_samp <= 20) {
+    c("jitter", "boxplot")
+} else {
     c("jitter", "vlnplot")
-)
+}
 width <- 0.7 + 0.3*n_cts
 height <- 2.5*3 + 0.075*n_char_max_ct
 
