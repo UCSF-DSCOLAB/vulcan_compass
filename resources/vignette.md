@@ -58,3 +58,6 @@ An interprettable plot showing differential reaction scores between these groups
 
 Raw compass outputs, as well as statistical outputs, can then be downloaded for local followup if desired.
 
+### Reaction Metadata
+
+To inspect the reactions in more detail, you can access the [Human1](https://github.com/wagnerlab-berkeley/Compass/tree/master/compass/Resources/Metabolic%20Models/Human1) or [Mouse1](https://github.com/wagnerlab-berkeley/Compass/tree/master/compass/Resources/Metabolic%20Models/Mouse1) resources directory of Compass where there are several .csv files that include metadata for the reactions. Alternatively, you can also visit [Metabolic Atlas](https://metabolicatlas.org/) to visualize the metabolic network.
