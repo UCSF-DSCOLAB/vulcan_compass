@@ -89,7 +89,11 @@ items, counts = np.unique(data['SUBSYSTEM'], return_counts=True)
 items = [items[i] for i in range(len(items)) if counts[i] > 5] #filter(n() > 5) %>%
 data = data[data['SUBSYSTEM'].isin(items)]
 
-data.to_csv(snakemake.output['reaction_stats_csv'], sep='\t')
+# Trim and reorder for output
+data_out = data.copy()
+data_out['cohens_d_abs']=abs(data_out['cohens_d'])
+data_out=data_out.sort_values(by='cohens_d_abs', ascending=False)
+data_out[['cohens_d', 'wilcox_stat', 'wilcox_pval', 'adjusted_pval', 'metadata_r_id', 'NAME', 'EQUATION', 'SUBSYSTEM', 'GENE_ASSOCIATION (SYMBOL)']].to_csv(snakemake.output['reaction_stats_csv'], sep='\t')
 
 data_sig = data[data['adjusted_pval'] < 0.05].copy()
 data_sig_pos = data[(data['adjusted_pval'] < 0.05) & (data['cohens_d'] > 0)].copy()
