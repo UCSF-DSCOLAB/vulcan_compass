@@ -50,15 +50,6 @@
   default: "Rank__rank_reactions_per_pseudobulk"
   output:
     params: [ "post_process_norm_method" ]
-- display: "4__Post-processing__Reaction meta-subsystem target"
-  ui_component: "dropdown"
-  doc: "This UI establishes the metabolic meta-subsystem to plot. Note: All three meta-subsystems will be run through compass regardless, so you will be able to cycle through each while analyzing!"
-  default: "LIPID_META_SUBSYSTEM"
-  input:
-    preset:
-      options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
-  output:
-    params: [ "post_process_meta_subsystem" ]
 
 ## Input UIs
 - display: "Provide your Gurobi License"
