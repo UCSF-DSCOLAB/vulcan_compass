@@ -194,9 +194,9 @@ rule plot_carbon_subsystem_comparison:
         reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
         reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
-        reaction_stats_csv="output/group_diff_reaction_stats.tsv",
-        subsystem_stats_csv="output/group_diff_subsystem_stats.tsv",
-        plot="output/red_blue.png"
+        reaction_stats_csv="output/carbon_group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/carbon_group_diff_subsystem_stats.tsv",
+        plot="output/carbon_red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
     script:
@@ -213,9 +213,9 @@ rule plot_lipid_subsystem_comparison:
         reaction_norm_sum="output/compass_output/LIPID_META_SUBSYSTEM/reactions_norm_sum.tsv",
         reaction_norm_rank="output/compass_output/LIPID_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
-        reaction_stats_csv="output/group_diff_reaction_stats.tsv",
-        subsystem_stats_csv="output/group_diff_subsystem_stats.tsv",
-        plot="output/red_blue.png"
+        reaction_stats_csv="output/lipid_group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/lipid_group_diff_subsystem_stats.tsv",
+        plot="output/lipid_red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
     script:
@@ -232,9 +232,9 @@ rule plot_AA_subsystem_comparison:
         reaction_norm_sum="output/compass_output/AA_META_SUBSYSTEMreactions_norm_sum.tsv",
         reaction_norm_rank="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
-        reaction_stats_csv="output/group_diff_reaction_stats.tsv",
-        subsystem_stats_csv="output/group_diff_subsystem_stats.tsv",
-        plot="output/red_blue.png"
+        reaction_stats_csv="output/AA_group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/AA_group_diff_subsystem_stats.tsv",
+        plot="output/AA_red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
     script:
