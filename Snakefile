@@ -114,7 +114,7 @@ rule run_compass:
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
         AA_reactions="output/compass_output/AA_META_SUBSYSTEM/reactions.tsv"
     singularity:
-        "/dscolab/vulcan/containers/compass-personal-license.sif"
+        "/dscolab/vulcan/containers/vulcan-compass.2026-03-30.sif"
     shell:
         """
         if [ "{params.species}" = "human" ]; then
