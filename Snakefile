@@ -2,9 +2,9 @@ configfile: "config.yaml"
 
 rule all:
     input:
-        thumbnail="output/red_blue.png",
+        thumbnail="output/lipid_red_blue.png",
         compass_tgz="output/compass.tar.gz",
-        all_plots="output/pseudo_qc.png"
+        all_plots=["output/pseudo_qc.png", "output/carbon_red_blue.png", "output/lipid_red_blue.png", "output/AA_red_blue.png"]
 
 rule get_gurobi_license: #UI
     params:
