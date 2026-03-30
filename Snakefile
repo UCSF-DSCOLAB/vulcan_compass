@@ -229,7 +229,7 @@ rule plot_AA_subsystem_comparison:
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
         reaction_scores="output/compass_output/AA_META_SUBSYSTEM/reaction_scores.tsv",
-        reaction_norm_sum="output/compass_output/AA_META_SUBSYSTEMreactions_norm_sum.tsv",
+        reaction_norm_sum="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_sum.tsv",
         reaction_norm_rank="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
         reaction_stats_csv="output/AA_group_diff_reaction_stats.tsv",
