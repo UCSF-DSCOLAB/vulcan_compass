@@ -15,38 +15,28 @@ samp_col <- input_str('sample_id_column')
 ct_col <- input_str('cell_type_column')
 df <- read.table(input_path('pseudo_metadata'), sep = "\t", header = TRUE, row.names = 1)
 
-ts_log('Reading in data and inputs')
 cts <- unique(df[,ct_col])
 n_cts <- length(cts)
 n_char_max_ct <- max(nchar(cts))
-med_n_samp <- median(table(df[,samp_col], df[,ct_col]))
-
-### Establish some plot features
-ts_log('Prepping to plot')
-reps <- ifelse(
-    med_n_samp <= 20,
-    c("jitter", "boxplot"),
-    c("jitter", "vlnplot")
-)
-width <- 0.7 + 0.3*n_cts
-height <- 2.5*3 + 0.075*n_char_max_ct
 
 ### Plot!
 ts_log('Plotting')
+width <- 0.7 + 0.3*n_cts
+height <- 2.5*3 + 0.075*n_char_max_ct
 png(output_path('all_plots'), w = width*75, h = height*75, res=75)
 yPlot(
     df,
-    c('scaling_factors__all_genes', 'scaling_factors__metab_targets', 'metabolism_counts_fraction'),
+    c('metabolism_counts_fraction', 'avg_nCounts_per_cell__all_genes', 'avg_nCounts_per_cell__metab_targets'),
     ct_col,
     main = "Metabolism Ammount Comparison Metrics",
     sub = "per sample/pseudobulk, grouped by cell type",
     split.ncol = 1,
     split.adjust = list(scale = 'free_y'),
-    plots = reps,
+    plots = c("vlnplot", "jitter"),
     vlnplot.quantiles = c(0.25, 0.5, 0.75),
     vlnplot.lineweight = 0.5,
-    boxplot.width = 0.5,
-    boxplot.lineweight = 0.5,
+    vlnplot.scaling = "width",
+    jitter.width = 0.8,
     legend.show = FALSE)
 dev.off()
 

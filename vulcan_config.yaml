@@ -50,15 +50,6 @@
   default: "Rank__rank_reactions_per_pseudobulk"
   output:
     params: [ "post_process_norm_method" ]
-- display: "4__Post-processing__Reaction meta-subsystem target"
-  ui_component: "dropdown"
-  doc: "This UI establishes the metabolic meta-subsystem to plot. Note: All three meta-subsystems will be run through Compass regardless, so you will be able to cycle through each while analyzing!"
-  default: "LIPID_META_SUBSYSTEM"
-  input:
-    preset:
-      options: ["CENTRAL_CARBON_META_SUBSYSTEM", "AA_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM"]
-  output:
-    params: [ "post_process_meta_subsystem" ]
 
 ## Input UIs
 - display: "Provide your Gurobi License"
@@ -106,15 +97,41 @@
   ui_component: "collapsible-markdown"
   input:
     files: [ "diff_groups_summary.md" ]
-- display: "Display Differential Reaction Summary Plot"
+- display: "Central Carbon Differential Reaction Summary Plot"
   ui_component: "plot"
   input: 
-    files: [ "red_blue.png" ]
-- display: 'Download Stats Results - Reactions'
+    files: [ "carbon_red_blue.png" ]
+- display: 'Central Carbon Reactions - Stats Download'
   ui_component: "link"
   input:
-    files: [ "group_diff_reaction_stats.tsv" ]
-- display: 'Download Stats Results - Subsystems'
+    files: [ "carbon_group_diff_reaction_stats.tsv" ]
+- display: 'Central Carbon Subsystem - Stats Download'
   ui_component: "link"
   input:
-    files: [ "group_diff_subsystem_stats.tsv" ]
+    files: [ "carbon_group_diff_subsystem_stats.tsv" ]
+- display: "Lipid Differential Reaction Summary Plot"
+  ui_component: "plot"
+  input: 
+    files: [ "lipid_red_blue.png" ]
+- display: 'Lipid Reactions - Stats Download'
+  ui_component: "link"
+  input:
+    files: [ "lipid_group_diff_reaction_stats.tsv" ]
+- display: 'Lipid Subsystem - Stats Download'
+  ui_component: "link"
+  input:
+    files: [ "lipid_group_diff_subsystem_stats.tsv" ]
+- display: "Amino Acid Differential Reaction Summary Plot"
+  ui_component: "plot"
+  input: 
+    files: [ "AA_red_blue.png" ]
+- display: 'Amino Acid Reactions - Stats Download'
+  ui_component: "link"
+  input:
+    files: [ "AA_group_diff_reaction_stats.tsv" ]
+- display: 'Amino Acid Subsystem - Stats Download'
+  ui_component: "link"
+  input:
+    files: [ "AA_group_diff_subsystem_stats.tsv" ]
+
+
