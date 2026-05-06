@@ -162,8 +162,8 @@ metab_mat <- pseudo_mat[genes_in,]
 dgelist_metab <- calcNormFactors(DGEList(counts = metab_mat), method = "none")
 
 pseudo_meta$metabolism_counts_fraction <- colSums(metab_mat)/colSums(pseudo_mat)
-pseudo_meta$scaling_factors__all_genes <- dgelist_all$samples$norm.factors
-pseudo_meta$scaling_factors__metab_targets <- dgelist_metab$samples$norm.factors
+pseudo_meta$avg_nCounts_per_cell__all_genes <- colSums(pseudo_mat)/pseudo_meta$pseudobulk_cell_num
+pseudo_meta$avg_nCounts_per_cell__metab_targets <- colSums(metab_mat)/pseudo_meta$pseudobulk_cell_num
 
 if (norm_method=="Yes__Only_to_metabolic_genes") {
     logger_ts("Note: Focusing toward metabolic genes only")

@@ -2,9 +2,9 @@ configfile: "config.yaml"
 
 rule all:
     input:
-        thumbnail="output/red_blue.png",
+        thumbnail="output/lipid_red_blue.png",
         compass_tgz="output/compass.tar.gz",
-        all_plots="output/pseudo_qc.png"
+        all_plots=["output/pseudo_qc.png", "output/carbon_red_blue.png", "output/lipid_red_blue.png", "output/AA_red_blue.png"]
 
 rule get_gurobi_license: #UI
     params:
@@ -114,7 +114,7 @@ rule run_compass:
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
         AA_reactions="output/compass_output/AA_META_SUBSYSTEM/reactions.tsv"
     singularity:
-        "/dscolab/vulcan/containers/compass-personal-license.sif"
+        "/dscolab/vulcan/containers/vulcan-compass.2026-03-30.sif"
     shell:
         """
         if [ "{params.species}" = "human" ]; then
@@ -183,26 +183,58 @@ rule parse_groupings:
     script:
         "scripts/interpret_diff_groups.py"
 
-rule plot_red_blue:
+rule plot_carbon_subsystem_comparison:
     params:
         post_process_norm_method=config["post_process_norm_method"],
-        post_process_meta_subsystem=config["post_process_meta_subsystem"]
+        post_process_meta_subsystem="CENTRAL_CARBON_META_SUBSYSTEM"
     input:
         group_1_inds="output/diff_group_1__indexes.csv",
         group_2_inds="output/diff_group_2__indexes.csv",
-        carbon_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
-        carbon_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
-        carbon_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv",
-        lipid_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
-        lipid_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
-        lipid_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv",
-        AA_reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
-        AA_reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
-        AA_reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv"
+        reaction_scores="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reaction_scores.tsv",
+        reaction_norm_sum="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_sum.tsv",
+        reaction_norm_rank="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions_norm_rank.tsv"
     output:
-        reaction_stats_csv="output/group_diff_reaction_stats.tsv",
-        subsystem_stats_csv="output/group_diff_subsystem_stats.tsv",
-        plot="output/red_blue.png"
+        reaction_stats_csv="output/carbon_group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/carbon_group_diff_subsystem_stats.tsv",
+        plot="output/carbon_red_blue.png"
+    singularity:
+        "/dscolab/vulcan/containers/archimedes-py.sif"
+    script:
+        "scripts/plot_red_blue.py"
+
+rule plot_lipid_subsystem_comparison:
+    params:
+        post_process_norm_method=config["post_process_norm_method"],
+        post_process_meta_subsystem="LIPID_META_SUBSYSTEM"
+    input:
+        group_1_inds="output/diff_group_1__indexes.csv",
+        group_2_inds="output/diff_group_2__indexes.csv",
+        reaction_scores="output/compass_output/LIPID_META_SUBSYSTEM/reaction_scores.tsv",
+        reaction_norm_sum="output/compass_output/LIPID_META_SUBSYSTEM/reactions_norm_sum.tsv",
+        reaction_norm_rank="output/compass_output/LIPID_META_SUBSYSTEM/reactions_norm_rank.tsv"
+    output:
+        reaction_stats_csv="output/lipid_group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/lipid_group_diff_subsystem_stats.tsv",
+        plot="output/lipid_red_blue.png"
+    singularity:
+        "/dscolab/vulcan/containers/archimedes-py.sif"
+    script:
+        "scripts/plot_red_blue.py"
+
+rule plot_AA_subsystem_comparison:
+    params:
+        post_process_norm_method=config["post_process_norm_method"],
+        post_process_meta_subsystem="AA_META_SUBSYSTEM"
+    input:
+        group_1_inds="output/diff_group_1__indexes.csv",
+        group_2_inds="output/diff_group_2__indexes.csv",
+        reaction_scores="output/compass_output/AA_META_SUBSYSTEM/reaction_scores.tsv",
+        reaction_norm_sum="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_sum.tsv",
+        reaction_norm_rank="output/compass_output/AA_META_SUBSYSTEM/reactions_norm_rank.tsv"
+    output:
+        reaction_stats_csv="output/AA_group_diff_reaction_stats.tsv",
+        subsystem_stats_csv="output/AA_group_diff_subsystem_stats.tsv",
+        plot="output/AA_red_blue.png"
     singularity:
         "/dscolab/vulcan/containers/archimedes-py.sif"
     script:
