@@ -43,7 +43,10 @@ The workflow starts with asking a few key parameterizations:
 
 After downloading the dataset into your workspace, you will then be able to select what metadata to use for pseudobulking.
 
-It then performs pseudobulking and runs Compass towards processes in the categories:
+### Module-Compass
+
+The [Module-Compass](https://compass-wagnerlab.readthedocs.io/en/latest/module_compass.html) algorithm is integrated into the Vulcan workflow. Broadly speaking, Module-Compass is an algorithm that partitions the metabolic network into individual subsystems, then runs the Compass flux-balance analysis calculation on reactions within these subsystems. This provides orders-of-magnitude speedup compared to the original Compass algorithm by running calculations on smaller, discrete subsystems that preserve the topology of the original metabolic network. By default, Module-Compass supports the following subsystems:
+
 - Central Carbon Metabolism
 - Amino Acid Metabolism
 - Lipid Metabolism
@@ -55,3 +58,6 @@ An interprettable plot showing differential reaction scores between these groups
 
 Raw compass outputs, as well as statistical outputs, can then be downloaded for local followup if desired.
 
+### Reaction Metadata
+
+To inspect the reactions in more detail, you can access the [Human1](https://github.com/wagnerlab-berkeley/Compass/tree/master/compass/Resources/Metabolic%20Models/Human1) or [Mouse1](https://github.com/wagnerlab-berkeley/Compass/tree/master/compass/Resources/Metabolic%20Models/Mouse1) resources directory of Compass where there are several .csv files that include metadata for the reactions. Alternatively, you can also visit [Metabolic Atlas](https://metabolicatlas.org/) to visualize the metabolic network.

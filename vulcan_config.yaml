@@ -29,7 +29,7 @@
     params: [ "pre_process_norm_method" ]
 - display: "3__Compass__species"
   ui_component: "dropdown"
-  doc: "..."
+  doc: "Establishes the species to use for matching provided gene names to the metabolic model."
   input:
     preset:
       options:
@@ -40,7 +40,7 @@
     params: [ "species" ]
 - display: "4__Post-processing__Reaction Score Normalization Method"
   ui_component: "dropdown"
-  doc: "Establishes if and how to normalize metabolic reaction scores (the negative log transformation of directly output reaction penalties) after compass has been run. The preferred method is currently unknown. Options are:\n\t-\"None\": use scores as-is.\n\t-\"Sum\": normalize reaction scores based on their proportion out of the sum of each meta-subsystem's reaction scores.\n\t-\"Rank\": apply rank-based normalization to compass outputs, per sample/pseudobulk, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
+  doc: "Establishes if and how to normalize metabolic reaction scores (the negative log transformation of reaction penalties directly output by Compass) after Compass has been run. The preferred method is currently unknown. Options are:\n\t-\"None\": use scores as-is.\n\t-\"Sum\": normalize reaction scores based on their proportion out of the sum of each meta-subsystem's reaction scores.\n\t-\"Rank\": apply rank-based normalization to Compass outputs, per sample/pseudobulk, where the lowest scoring reaction will receive a value of 1, and the highest scoring reaction will receive a value equal to the number of reactions."
   input:
     preset:
       options:
@@ -69,7 +69,7 @@
 - display: "Pseudobulking: Cell-Types Metadata Column Name"
   name: ui_select_cell_type_metadata
   ui_component: "dropdown"
-  doc: "Recommendation: Check the target record's 'metadata_annots_fine' or 'meatdata_annots_broad' attributes. Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
+  doc: "Recommendation: Check the target record's 'metadata_annots_fine' or 'metadata_annots_broad' attributes. Establishes the column name of the cells metadata that holds cell type identities of cells. Pseudobulking will rely on this column, which affects everything downstream."
   input:
     files: ["scdata_discrete_opts_no_recs_added.json", "scdata_celltype_rec.json"]
   output:
