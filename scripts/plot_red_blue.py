@@ -21,6 +21,12 @@ reaction_suffix = "norm_sum" if snakemake.config['post_process_norm_method'] == 
 reactions_use = pd.read_csv(snakemake.input[f'reaction_{reaction_suffix}'], sep="\t", index_col = 0)
 reaction_metadata = pd.read_csv(f'output/compass_output/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
 
+plot_size = {
+    "LIPID_META_SUBSYSTEM": (10,12),
+    "CENTRAL_CARBON_META_SUBSYSTEM": (10,1.5),
+    "AA_META_SUBSYSTEM": (10,3.5)
+}[subsystem_full]
+
 ### Functions
 def cohens_d(x, y):
     pooled_std = np.sqrt(((len(x)-1) * np.var(x, ddof=1) 
@@ -134,7 +140,7 @@ pd.DataFrame(
 ).to_csv(snakemake.output['subsystem_stats_csv'], sep='\t')
 
 ### Plot
-plt.figure(figsize=(12,12))
+plt.figure(figsize=plot_size)
 axs = plt.gca()
 #Sorts the reactions for plotting
 d = data.groupby('SUBSYSTEM')['cohens_d'].mean()
