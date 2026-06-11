@@ -12,11 +12,11 @@ if matplotlibversion < "3.4":
 group_A_cells = list(pd.read_csv(snakemake.input['group_1_inds'], header=None)[0])[1:]
 group_B_cells = list(pd.read_csv(snakemake.input['group_2_inds'], header=None)[0])[1:]
 # Parse reaction file target
-subsystem_full = snakemake.config['post_process_meta_subsystem']
+subsystem_full = snakemake.params['post_process_meta_subsystem']
 if not subsystem_full in ["CENTRAL_CARBON_META_SUBSYSTEM", "LIPID_META_SUBSYSTEM", "AA_META_SUBSYSTEM"]:
     raise Exception("NOT FOUND ERROR")
-reaction_suffix = "norm_sum" if snakemake.config['post_process_norm_method'] == "Sum__divide_by_sum_per_susbsystem" \
-    else "norm_rank" if snakemake.config['post_process_norm_method'] == "Rank__rank_reactions_per_pseudobulk" \
+reaction_suffix = "norm_sum" if snakemake.params['post_process_norm_method'] == "Sum__divide_by_sum_per_susbsystem" \
+    else "norm_rank" if snakemake.params['post_process_norm_method'] == "Rank__rank_reactions_per_pseudobulk" \
     else "scores"
 reactions_use = pd.read_csv(snakemake.input[f'reaction_{reaction_suffix}'], sep="\t", index_col = 0)
 reaction_metadata = pd.read_csv(f'output/compass_output/meta_subsystem_models/{subsystem_full}/{subsystem_full}_rxn_meta.csv', index_col = 0)
