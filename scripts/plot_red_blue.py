@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import mannwhitneyu, hypergeom
 from statsmodels.stats.multitest import multipletests
 from matplotlib import __version__ as matplotlibversion
+from matplotlib.lines import Line2D
 import json
 if matplotlibversion < "3.4":
     print("Matplotlib versions older than 3.4 may not be able to generate figure 2E, as they do not support alpha arrays")
@@ -159,10 +160,22 @@ axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_co
 axs.scatter(data[data['SUBSYSTEM'].isin(sorted_subsystems)]['cohens_d'].values,
             data[data['SUBSYSTEM'].isin(sorted_subsystems)]['SUBSYSTEM'].values,
             c=color, alpha=alpha, s=size)
-axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black', label='mean of all reactions')
+axs.scatter(d[sorted_subsystems], d[sorted_subsystems].index, marker='^', c=d_color[sorted_subsystems], s=90, edgecolors='black')
 
 axs.set_xlabel(f"(higher in Group 2)                          Cohen's d                          (higher in Group 1)")
 
-plt.legend()
+legend_elements = [
+    Line2D([0], [0], marker='o', color='w', markerfacecolor='#1F78B4',
+           markersize=8, alpha=1.0, label="Group 2 enriched, FDR < 0.05"),
+    Line2D([0], [0], marker='o', color='w', markerfacecolor='#1F78B4',
+           markersize=8, alpha=0.25, label="Group 2 enriched, NS"),
+    Line2D([0], [0], marker='o', color='w', markerfacecolor='#E31A1C',
+           markersize=8, alpha=0.25, label="Group 1 enriched, NS"),
+    Line2D([0], [0], marker='o', color='w', markerfacecolor='#E31A1C',
+           markersize=8, alpha=1.0, label="Group 1 enriched, FDR < 0.05"),
+    Line2D([0], [0], marker='^', color='w', markerfacecolor='black',
+           markeredgecolor='black', markersize=10, label='mean of all reactions\ncolored when FDR < 0.05'),
+]
+axs.legend(handles=legend_elements, frameon=True, bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
 
 plt.savefig(snakemake.output['plot'], dpi=300, bbox_inches="tight")
