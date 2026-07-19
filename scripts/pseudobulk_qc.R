@@ -15,6 +15,35 @@ samp_col <- input_str('sample_id_column')
 ct_col <- input_str('cell_type_column')
 df <- read.table(input_path('pseudo_metadata'), sep = "\t", header = TRUE, row.names = 1)
 
+df <- df[,c(
+    "metabolism_counts_fraction",
+    "avg_nCounts_per_cell__all_genes",
+    "avg_nCounts_per_cell__metab_targets",
+    ct_col
+)]
+names_use <- c(
+    "Metabolism Targets Fraction",
+    "Total Counts - All Genes",
+    "Total Counts - Metabolic Target Genes"
+)
+colnames(df)[1:3] <- names_use 
+
+# Median ranges
+df_lines <- data.frame(
+    var.which = names_use
+)
+df_lines$median <- sapply(
+    names_use, function(col) {
+        median(df[,col])
+    }
+)
+df_lines$IQR <- sapply(
+    names_use, function(col) {
+        IQR(df[,col])
+    }
+)
+
+
 cts <- unique(df[,ct_col])
 n_cts <- length(cts)
 n_char_max_ct <- max(nchar(cts))
@@ -26,10 +55,10 @@ height <- 2.5*3 + 0.075*n_char_max_ct
 png(output_path('all_plots'), w = width*75, h = height*75, res=75)
 yPlot(
     df,
-    c('metabolism_counts_fraction', 'avg_nCounts_per_cell__all_genes', 'avg_nCounts_per_cell__metab_targets'),
+    names_use,
     ct_col,
-    main = "Metabolism Ammount Comparison Metrics",
-    sub = "per sample/pseudobulk, grouped by cell type",
+    main = "Metabolism Count Metrics for Normalization Choice Assessment",
+    sub = "Data points represent each reatined pseudobulk\nValues represent the mean across pseudobulks' contituent cells",
     split.ncol = 1,
     split.adjust = list(scale = 'free_y'),
     plots = c("vlnplot", "jitter"),
@@ -37,7 +66,24 @@ yPlot(
     vlnplot.lineweight = 0.5,
     vlnplot.scaling = "width",
     jitter.width = 0.8,
-    legend.show = FALSE)
+    legend.show = FALSE) +
+    geom_hline(
+        data = df_lines,
+        mapping = aes(y=median),
+        linetype = 'dashed'
+    ) +
+    geom_hline(
+        data = df_lines,
+        mapping = aes(y=median - 0.75 * IQR),
+        lineweight = 0.5,
+        linetype = 'dotted'
+    ) +
+    geom_hline(
+        data = df_lines,
+        mapping = aes(y=median + 0.75 * IQR),
+        lineweight = 0.5,
+        linetype = 'dotted'
+    )
 dev.off()
 
 ts_log('DONE')
