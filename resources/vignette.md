@@ -76,7 +76,7 @@ To inspect the reactions in more detail, you can access the [Human1](https://git
 Each dot represents a reaction, colored red if higher in Group 1 (Cohen's d of 0 or above) or blue if higher in Group 2. Significant reactions (adjusted p below 0.05) are shown in solid color, while non-significant reactions are shown in lighter color. Reaction-level p-values are computed using the unpaired Wilcoxon rank-sum test (equivalent to the Mann-Whitney U test), comparing reaction consistency scores between the two groups. Effect sizes are calculated by Cohen's d, and p-values are FDR-corrected across all tested reactions.
 
 
-Each triangle shows each subsystem's mean Cohen's d across its reactions. The triangle is colored red if its subsystem is significantly enriched for Group 1–higher reactions, blue if significantly enriched for Group 2–higher, and black if neither is significant. Enrichment significance is computed with a hypergeometric test for enrichment of significant reactions within each subsystem, followed by FDR correction across subsystems.
+Each triangle shows each subsystem's mean Cohen's d across its reactions. The triangle is colored red if its subsystem is significantly enriched for Group 1-higher reactions, blue if significantly enriched for Group 2-higher, and black if neither side is significant. Enrichment significance is computed with a hypergeometric test for enrichment of significant reactions within each subsystem, followed by FDR correction across subsystems.
 
 
-To explore individual reactions further, please refer to the reaction-level statistics table. Please note that depending on the metabolic model, a reaction may appear in more than one pathway.
+To explore individual reactions further, please refer to the reaction-level statistics table within the downloadable reaction stats output. Please note that depending on the metabolic model, a reaction may appear in more than one pathway.
