@@ -22,9 +22,9 @@ df <- df[,c(
     ct_col
 )]
 names_use <- c(
-    "Metabolism Targets Fraction",
+    "Metabolic Counts / Total Counts",
     "Total Counts - All Genes",
-    "Total Counts - Metabolic Target Genes"
+    "Total Counts - Metabolic Genes"
 )
 colnames(df)[1:3] <- names_use 
 
@@ -58,7 +58,7 @@ yPlot(
     names_use,
     ct_col,
     main = "Metabolism Count Metrics for Normalization Choice Assessment",
-    sub = "Data points represent each reatined pseudobulk\nValues represent the mean across pseudobulks' contituent cells",
+    sub = "Data points represent each reatined pseudobulk\nValues represent the mean across pseudobulks' contituent cells\nSolid lines within violins represent median and upper & lower quartiles per celltype\nDashed and dotted lines represent median and upper & lower quartiles accross all pseudobulks",
     split.ncol = 1,
     split.adjust = list(scale = 'free_y'),
     plots = c("vlnplot", "jitter"),
@@ -69,18 +69,18 @@ yPlot(
     legend.show = FALSE) +
     geom_hline(
         data = df_lines,
-        mapping = aes(y=median),
+        mapping = aes(yintercept=median),
         linetype = 'dashed'
     ) +
     geom_hline(
         data = df_lines,
-        mapping = aes(y=median - 0.75 * IQR),
+        mapping = aes(yintercept=median - 0.75 * IQR),
         lineweight = 0.5,
         linetype = 'dotted'
     ) +
     geom_hline(
         data = df_lines,
-        mapping = aes(y=median + 0.75 * IQR),
+        mapping = aes(yintercept=median + 0.75 * IQR),
         lineweight = 0.5,
         linetype = 'dotted'
     )
