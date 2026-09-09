@@ -58,6 +58,20 @@ An interprettable plot showing differential reaction scores between these groups
 
 Raw compass outputs, as well as statistical outputs, can then be downloaded for local followup if desired.
 
+### Normalization Choice
+
+By default, reactions are normalized against counts of all genes. This preserves each cell's overall metabolic activity level, so that cells with globally higher biosynthetic activity (most notably proliferating cells) will carry this difference into the Compass analysis.
+
+Normalizing against metabolic genes only removes this overall-activity signal, preserving relative usage across metabolic pathways. This is useful when the goal is to identify metabolic rewiring between groups independent of differences in overall metabolic activity.
+
 ### Reaction Metadata
 
 To inspect the reactions in more detail, you can access the [Human1](https://github.com/wagnerlab-berkeley/Compass/tree/master/compass/Resources/Metabolic%20Models/Human1) or [Mouse1](https://github.com/wagnerlab-berkeley/Compass/tree/master/compass/Resources/Metabolic%20Models/Mouse1) resources directory of Compass where there are several .csv files that include metadata for the reactions. Alternatively, you can also visit [Metabolic Atlas](https://metabolicatlas.org/) to visualize the metabolic network.
+
+### Deeper plot explanations
+
+Each dot represents a reaction, colored red if higher in Group 1 (Cohen's d ≥ 0) or blue if higher in Group 2. Significant reactions (adjusted p < 0.05) are shown in solid color, while non-significant reactions are shown in lighter color. Reaction-level p-values are computed using the unpaired Wilcoxon rank-sum test (equivalent to the Mann-Whitney U test), comparing reaction consistency scores between the two groups. Effect sizes are calculated by Cohen's d, and p-values are FDR-corrected across all tested reactions.
+
+Each triangle shows each subsystem's mean Cohen's d across its reactions. The triangle is colored red if its subsystem is significantly enriched for Group 1–higher reactions, blue if significantly enriched for Group 2–higher, and black if neither is significant. Enrichment significance is computed with a hypergeometric test for enrichment of significant reactions within each subsystem, followed by FDR correction across subsystems.
+
+To explore individual reactions further, please refer to the reaction-level statistics table. Please note that depending on the metabolic model, a reaction may appear in more than one pathway.
