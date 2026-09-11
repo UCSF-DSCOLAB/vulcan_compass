@@ -24,7 +24,7 @@
       options: 
         - "No__To_all_genes"
         - "Yes__Only_to_metabolic_genes"
-  default: "Yes__Only_to_metabolic_genes"
+  default: "No__To_all_genes"
   output:
     params: [ "pre_process_norm_method" ]
 - display: "3__Compass__species"
