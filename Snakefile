@@ -132,7 +132,7 @@ rule Run_Compass:
             --model Human1 \
             --select-meta-subsystems {input.meta_subsystems}
         """
-rule After_Compass:
+rule After_Compass_normalization_and_download_prep:
     input:
         carbon_reactions="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv",
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
