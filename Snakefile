@@ -12,7 +12,7 @@ rule get_gurobi_license: #UI
     output:
         ["output/gurobi_license_string.txt"]
 
-rule fix_license_formatting:
+rule Inject_Gurobi_License:
     input:
         txt="output/gurobi_license_string.txt",
     output:
@@ -23,7 +23,7 @@ rule fix_license_formatting:
         with open(output.lic, 'w') as output_file:
             output_file.write(text.replace('"','').replace('\\n', '\n'))
 
-rule get_dataset_and_summarize:
+rule Get_Dataset_and_Summarize:
     params:
         dataset_name=config["dataset_name"]
     output:
@@ -61,7 +61,7 @@ rule ui_select_cell_type_metadata:
     output:
         ["output/celltype_metadata.txt"]
 
-rule pseudobulk_dataset:
+rule Pseudobulk_Dataset:
     params:
         min_cells=config["min_cells"],
         pre_process_norm_method=config["pre_process_norm_method"]
@@ -84,7 +84,7 @@ rule pseudobulk_dataset:
     script:
         "scripts/pseudobulk_data_elements.R"
 
-rule pseudobulk_qc_plotting:
+rule Pseudobulk_QC:
     params:
         pre_process_norm_method=config["pre_process_norm_method"]
     input:
@@ -98,7 +98,7 @@ rule pseudobulk_qc_plotting:
     script:
         "scripts/pseudobulk_qc.R"
 
-rule run_compass:
+rule Run_Compass:
     params:
         species=config["species"]
     input:
@@ -132,7 +132,7 @@ rule run_compass:
             --model Human1 \
             --select-meta-subsystems {input.meta_subsystems}
         """
-rule after_compass:
+rule After_Compass:
     input:
         carbon_reactions="output/compass_output/CENTRAL_CARBON_META_SUBSYSTEM/reactions.tsv",
         lipid_reactions="output/compass_output/LIPID_META_SUBSYSTEM/reactions.tsv",
@@ -165,7 +165,7 @@ rule ui_diff_targets_cells: #UI
     output:
         ["output/diff_group_1__formula.json", "output/diff_group_2__formula.json"]
 
-rule parse_groupings:
+rule Parse_Groups:
     input:
         group_def_1="output/diff_group_1__formula.json",
         group_def_2="output/diff_group_2__formula.json",
@@ -183,7 +183,7 @@ rule parse_groupings:
     script:
         "scripts/interpret_diff_groups.py"
 
-rule plot_carbon_subsystem_comparison:
+rule Comparison_in_Carbon_Subsystem:
     params:
         post_process_norm_method=config["post_process_norm_method"],
         post_process_meta_subsystem="CENTRAL_CARBON_META_SUBSYSTEM"
@@ -202,7 +202,7 @@ rule plot_carbon_subsystem_comparison:
     script:
         "scripts/plot_red_blue.py"
 
-rule plot_lipid_subsystem_comparison:
+rule Comparison_in_Lipid_Subsystem:
     params:
         post_process_norm_method=config["post_process_norm_method"],
         post_process_meta_subsystem="LIPID_META_SUBSYSTEM"
@@ -221,7 +221,7 @@ rule plot_lipid_subsystem_comparison:
     script:
         "scripts/plot_red_blue.py"
 
-rule plot_AA_subsystem_comparison:
+rule Comparison_in_Amino_Acid_Subsystem:
     params:
         post_process_norm_method=config["post_process_norm_method"],
         post_process_meta_subsystem="AA_META_SUBSYSTEM"
